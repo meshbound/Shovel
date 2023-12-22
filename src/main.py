@@ -1,3 +1,4 @@
-import parser
+from generate_video import generate_video
 
-input("Press any key to continue...")
+video = generate_video(["test", "tags"])
+print(video)
