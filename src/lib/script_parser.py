@@ -1,4 +1,4 @@
-from .outline import ShotOutline
+from lib.video_outline import ShotOutline
 
 def parse_shot(text: str) -> ShotOutline:
     lines = text.strip().split('\n')

@@ -6,5 +6,5 @@ class SpeechGenerator:
 
     def generate_speech(self, text: str) -> AudioFileClip:
         print(f"Generating speech from text: {text}")
-        audio = AudioFileClip('src/generation/media_gen/test_audio.wav')
+        audio = AudioFileClip('src/lib/test_audio.wav')
         return audio

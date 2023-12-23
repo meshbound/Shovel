@@ -25,7 +25,10 @@ They all laughed at him for eating powdered sugar because he could not afford gr
 [img:boy eating granulated sugar]
 
 Little did they know what amazing talent he possessed.
-[img:boy doing flossing dance]"""
+[img:boy doing flossing dance]""",
+            "api_key": "",
+            "temperature": 0.25,
+            "max_length": 256
         },
         "image_gen": {
             "width": 512,
