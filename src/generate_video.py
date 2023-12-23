@@ -1,4 +1,4 @@
-from generation.script_gen.generate_script import ScriptGenerator
+from generate_script import ScriptGenerator
 from generation.script_gen.parser import parse_text
 from generation.script_gen.outline import VideoOutline
 from generation.media_gen.video_outline import generate_video_outline
