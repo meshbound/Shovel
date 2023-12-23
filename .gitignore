@@ -1,4 +1,5 @@
 ./data
+config.json
 
 # VSCode
 .vscode/
