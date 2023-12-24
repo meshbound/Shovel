@@ -2,3 +2,4 @@ moviepy >= 1.0.3
 Pillow >= 10.1.0
 numpy >= 1.26.2
 openai >= 0.28.1
+google-cloud-texttospeech >= 2.15.0
