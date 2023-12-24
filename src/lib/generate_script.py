@@ -29,7 +29,7 @@ class ScriptGenerator:
                 },
                 {
                     "role": "user",
-                    "content": f"Tags: {', '.join(tags)}"
+                    "content": f"Prompt: {', '.join(tags)}"
                 }
             ],
         )
