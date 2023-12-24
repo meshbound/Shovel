@@ -1,6 +1,7 @@
 ./data
 config.json
 src/auth/google/*
+src/lib/audio_tmp/*
 
 # VSCode
 .vscode/
