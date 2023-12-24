@@ -30,7 +30,7 @@ class VideoOutline:
         print("Generating video outline...")
 
         for shot_outline in shot_outlines:
-            generated_image = image_generator.generate_image(shot_outline.prompt)
+            generated_image = image_generator.generate_image(shot_outline.prompt, use_placeholder=True)
             generated_speech = speech_generator.generate_speech(shot_outline.text, use_placeholder=True)
             shot = Shot(shot_outline.text, generated_speech, generated_image)
             shots.append(shot)
