@@ -1,15 +1,21 @@
 import random
 import numpy
 import hashlib
+import lib.config as config
 from PIL import Image
 from PIL import ImageDraw, ImageFont
 from moviepy.editor import ImageClip
+from openai import OpenAI
 
 class ImageGenerator:
     def __init__(self):
-        pass
+        self._text_gen_config: dict = config.get_value("text_gen")
+        self._client = OpenAI(
+            api_key=self._text_gen_config.get("api_key"),
+        )
 
-    def __generate_placeholder_image(self, prompt: str) -> ImageClip:
+    @staticmethod
+    def __generate_placeholder_image(prompt: str) -> ImageClip:
         prompt_hash = hashlib.sha256(prompt.encode()).digest()
         seeded_random = random.Random(prompt_hash)
 
@@ -33,6 +39,13 @@ class ImageGenerator:
         print(f"Generating image from prompt: {prompt}")
 
         if use_placeholder:
-            return self.__generate_placeholder_image(prompt)
+            return ImageGenerator.__generate_placeholder_image(prompt)
         
-        raise NotImplementedError("Image generation is not implemented yet")
+        response = self._client.images.generate(
+            model="dall-e-2",
+            prompt=prompt,
+            size="512x512",
+            n=1
+        )
+        image_url = response.data[0].url
+        print("Generated image: " + image_url)
