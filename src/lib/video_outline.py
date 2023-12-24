@@ -1,5 +1,5 @@
 import lib.image as image
-import lib.speech as speech
+import lib.generate_speech as generate_speech
 
 from moviepy.editor import ImageClip, AudioFileClip
 
@@ -25,13 +25,13 @@ class VideoOutline:
     def generate(shot_outlines: list[ShotOutline]):
         shots = []
         image_generator = image.ImageGenerator()
-        speech_generator = speech.SpeechGenerator()
+        speech_generator = generate_speech.SpeechGenerator()
 
         print("Generating video outline...")
 
         for shot_outline in shot_outlines:
             generated_image = image_generator.generate_image(shot_outline.prompt)
-            generated_speech = speech_generator.generate_speech(shot_outline.text)
+            generated_speech = speech_generator.generate_speech(shot_outline.text, use_placeholder=True)
             shot = Shot(shot_outline.text, generated_speech, generated_image)
             shots.append(shot)
 
