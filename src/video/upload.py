@@ -13,4 +13,4 @@ def upload_video():
 def write_video(video: VideoFileClip, config: ConfigObj):
     name = "out.mp4"
     dest_path = config["dirs"]["root"] + config["dirs"]["sub_dirs"]["video_out"]
-    video.write_videofile(dest_path + "/" + name,fps=60)
+    video.write_videofile(dest_path + "/" + name,fps=24)
