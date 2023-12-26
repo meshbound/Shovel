@@ -1,15 +1,14 @@
 from util import random_file_from_dir, get_subdir_path
 from generation.script_gen.outline import VideoOutline
-from configobj import ConfigObj
+from config import get_config
 from moviepy.video.fx import resize
 from moviepy.editor import *
 import random
-import numpy
 import math
 
-def patch_video(config: ConfigObj, outline: VideoOutline) -> VideoFileClip:
-    padding = float(config["video"]["padding"])
-    chunks = int(config["video"]["max_caption_chunks"])
+def patch_video(outline: VideoOutline) -> VideoFileClip:
+    padding = float(get_config()["video"]["padding"])
+    chunks = int(get_config()["video"]["max_caption_chunks"])
 
     patched_duration = 0
     video_clips = []
@@ -62,12 +61,12 @@ def patch_video(config: ConfigObj, outline: VideoOutline) -> VideoFileClip:
         audio = s.speech.set_start(duration * i)
         audio_clips.append(audio)
 
-    backgrounds_path = get_subdir_path(config, "assets_background")
+    backgrounds_path = get_subdir_path(get_config(), "assets_background")
     background_select = random_file_from_dir(backgrounds_path)
     background = ImageClip(backgrounds_path + "/" + background_select)
     video_clips.insert(0, background)
 
-    bottoms_path = get_subdir_path(config, "assets_bottom")
+    bottoms_path = get_subdir_path(get_config(), "assets_bottom")
     bottom_select = random_file_from_dir(bottoms_path)
     if bottom_select != None:
         bottom = VideoFileClip(bottoms_path + "/" + bottom_select)

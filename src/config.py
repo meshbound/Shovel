@@ -3,21 +3,27 @@ from configobj import ConfigObj
 from PIL import Image
 import os
 
-config_path = "./shovel.ini"
+_config_path = "./shovel.ini"
+_config = None
 
-def load_config() -> ConfigObj:
-    if not os.path.exists(config_path):
+def get_config():
+    if _config == None:
+        load_config()
+    return _config
+
+def load_config():
+    global _config
+    if not os.path.exists(_config_path):
         print("No config found!")
         write_default_config()
-    config = ConfigObj(config_path)
-    verify_file_structure(config)
-    verify_assets(config)
-    return config
+    _config = ConfigObj(_config_path)
+    verify_file_structure()
+    verify_assets()
 
 def write_default_config():
     print("Writing new config...")
     config = ConfigObj()
-    config.filename = config_path
+    config.filename = _config_path
 
     config["dirs"] = {}
     dirs = config["dirs"]
@@ -37,18 +43,18 @@ def write_default_config():
 
     config.write()
 
-def verify_file_structure(config: ConfigObj):
-    root = config["dirs"]["root"]
+def verify_file_structure():
+    root = _config["dirs"]["root"]
     if not os.path.exists(root):
         os.mkdir(root)
-    sub_dirs = config["dirs"]["sub_dirs"]
+    sub_dirs = _config["dirs"]["sub_dirs"]
     for sub_dir in sub_dirs:
         dir_path = root + sub_dirs[sub_dir]
         if not os.path.exists(dir_path):
             os.mkdir(dir_path)
 
-def verify_assets(config: ConfigObj):
-    backgrounds_path = get_subdir_path(config, "assets_background")
+def verify_assets():
+    backgrounds_path = get_subdir_path(_config, "assets_background")
     background_files = get_files_in_dir(backgrounds_path)
     valid_backgrounds = len(background_files)
     for f in background_files:
