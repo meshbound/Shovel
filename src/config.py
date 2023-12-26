@@ -26,13 +26,14 @@ def write_default_config():
     sub_dirs = dirs["sub_dirs"]
     sub_dirs["video_out"] = "out"
     sub_dirs["assets_background"] = "backgrounds"
-    sub_dirs["assets_overlays"] = "overlays"
+    sub_dirs["assets_overlay"] = "overlays"
+    sub_dirs["assets_bottom"] = "bottoms"
     sub_dirs["assets_sfx"] = "sfx"
 
     config["video"] = {}
     video = config["video"]
     video["padding"] = 0.2
-    video["max_caption_chunks"] = 3
+    video["max_caption_chunks"] = 2
 
     config.write()
 

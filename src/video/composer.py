@@ -1,25 +1,19 @@
-from util import get_files_in_dir, get_subdir_path, to_imageclip
+from util import random_file_from_dir, get_subdir_path
 from generation.script_gen.outline import VideoOutline
 from configobj import ConfigObj
+from moviepy.video.fx import resize
 from moviepy.editor import *
-from PIL import Image
-import math
 import random
+import numpy
+import math
 
-def patch_video(outline: VideoOutline, config: ConfigObj) -> VideoFileClip:
-    backgrounds_path = get_subdir_path(config, "assets_background")
-    background_files = get_files_in_dir(backgrounds_path)
-    background_select = background_files[random.randint(0, len(background_files) - 1)]
-    background = to_imageclip(Image.open(backgrounds_path + "/" + background_select))
-
+def patch_video(config: ConfigObj, outline: VideoOutline) -> VideoFileClip:
     padding = float(config["video"]["padding"])
-    chunks = float(config["video"]["max_caption_chunks"])
+    chunks = int(config["video"]["max_caption_chunks"])
 
     patched_duration = 0
     video_clips = []
     audio_clips = []
-
-    video_clips.append(background)
 
     for i in range (0, len(outline.shots)):
         s = outline.shots[i]
@@ -28,30 +22,60 @@ def patch_video(outline: VideoOutline, config: ConfigObj) -> VideoFileClip:
 
         image = s.image.set_start(duration * i)
         image = image.set_duration(duration)
+        image = resize.resize(image, width=1080, height=1080)
         video_clips.append(image)
-
+        
         words = s.text.split()
         wps = math.ceil(len(words) / duration)
         twps = wps * chunks
+        x = 0
         while len(words) > 0:
             curr = []
-            if len(words) - twps < 0:
+            if len(words) - twps >= 0:
                 curr = words[:twps]
                 words = words[twps:]
             else:
                 curr = words
                 words = []
-            
+
             text = " ".join(curr)
-            caption = TextClip(text, fontsize = 20, 
-                                color = 'black', font="Amiri-Bold")
-            caption = caption.set_start(duration * i)
+            zoom_fun = lambda t: 1 / (1.0 + math.e**(-20.0*(t-0.2)))
+
+            caption = TextClip(text, fontsize=50,
+                                color="black", font="Arial-bold", 
+                                stroke_width=30, stroke_color="black")
+            caption = caption.set_start(duration * i + x * chunks)
             caption = caption.set_duration(chunks)
-            caption = caption.set_position(("center","bottom"))
+            caption = resize.resize(caption, zoom_fun)
+            caption = caption.set_position(("center", 1070))
             video_clips.append(caption)
+
+            caption = TextClip(text, fontsize=50,
+                                color="white", font="Arial-bold")
+            caption = caption.set_start(duration * i + x * chunks)
+            caption = caption.set_duration(chunks)
+            caption = resize.resize(caption, zoom_fun)
+            caption = caption.set_position(("center", 1080))
+            video_clips.append(caption)
+            x += 1
 
         audio = s.speech.set_start(duration * i)
         audio_clips.append(audio)
+
+    backgrounds_path = get_subdir_path(config, "assets_background")
+    background_select = random_file_from_dir(backgrounds_path)
+    background = ImageClip(backgrounds_path + "/" + background_select)
+    video_clips.insert(0, background)
+
+    bottoms_path = get_subdir_path(config, "assets_bottom")
+    bottom_select = random_file_from_dir(bottoms_path)
+    if bottom_select != None:
+        bottom = VideoFileClip(bottoms_path + "/" + bottom_select)
+        bottom = bottom.subclip(random.randint(0, math.floor(bottom.duration) 
+                                            - math.ceil(patched_duration)))
+        bottom = bottom.set_position(("center",1080))
+        bottom = resize.resize(bottom, width=1080, height=840)
+        video_clips.insert(1, bottom)
 
     patched = CompositeVideoClip(video_clips)
     patched.duration = patched_duration
