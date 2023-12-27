@@ -27,16 +27,21 @@ def write_default_config():
 
     config["dirs"] = {}
     dirs = config["dirs"]
-    dirs["root"] = "./stash/"
-    dirs["sub_dirs"] = {}
-    sub_dirs = dirs["sub_dirs"]
-    sub_dirs["video_out"] = "out"
-    sub_dirs["background_assets"] = "assets/backgrounds"
-    sub_dirs["overlay_assets"] = "assets/overlays"
-    sub_dirs["bottom_assets"] = "assets/bottoms"
-    sub_dirs["music_assets"] = "assets/music"
-    sub_dirs["audio_temp"] = "tmp/audio"
-    sub_dirs["image_temp"] = "tmp/image"
+    dirs["stash_dirs"] = {}
+    stash_dirs = dirs["stash_dirs"]
+    stash_dirs["root"] = "./stash/"
+    stash_dirs["video_out"] = "out"
+    stash_dirs["background_assets"] = "assets/backgrounds"
+    stash_dirs["overlay_assets"] = "assets/overlays"
+    stash_dirs["bottom_assets"] = "assets/bottoms"
+    stash_dirs["music_assets"] = "assets/music"
+    stash_dirs["audio_temp"] = "tmp/audio"
+    stash_dirs["image_temp"] = "tmp/image"
+    dirs["auth_dirs"] = {}
+    auth_dirs = dirs["auth_dirs"]
+    auth_dirs["root"] = "./auth/"
+    auth_dirs["youtube"] = "youtube"
+    auth_dirs["google"] = "google"
 
     config["video"] = {}
     video = config["video"]
@@ -79,12 +84,14 @@ Little did they know what amazing talent he possessed.
     config.write()
 
 def verify_file_structure():
-    root = _config["dirs"]["root"]
-    sub_dirs = _config["dirs"]["sub_dirs"]
-    for sub_dir in sub_dirs:
-        dir_path = root + sub_dirs[sub_dir]
-        if not os.path.exists(dir_path):
-            os.makedirs(dir_path, exist_ok=True)
+    for dir in _config["dirs"]:
+        root = _config["dirs"][dir]["root"]
+        for subdir in _config["dirs"][dir]:
+            if subdir == "root":
+                continue
+            dir_path = root + _config["dirs"][dir][subdir]
+            if not os.path.exists(dir_path):
+                os.makedirs(dir_path, exist_ok=True)
 
 def verify_assets():
     backgrounds_path = get_subdir_path(_config, "background_assets")

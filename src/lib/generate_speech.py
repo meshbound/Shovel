@@ -3,7 +3,7 @@ import time
 import math
 import pyttsx3
 from lib.config import get_config
-from lib.util import get_subdir_path
+from lib.util import get_subdir_path, get_files_in_dir
 from google.cloud import texttospeech
 from moviepy.editor import AudioFileClip
 
@@ -12,8 +12,9 @@ class SpeechGenerator:
         self.use_placeholder = use_placeholder
         if use_placeholder:
             return
-        auth_file_name = os.listdir("src/auth/google/")[0]
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "src/auth/google/" + auth_file_name
+        auth_path = get_subdir_path(get_config(),"google")
+        auth_files = get_files_in_dir(auth_path)
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = auth_files[0]
         self.client = texttospeech.TextToSpeechClient()
 
     async def generate_speech(self, text: str) -> AudioFileClip:

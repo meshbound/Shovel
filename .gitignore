@@ -1,5 +1,6 @@
 src/auth/google/*
 stash/
+auth/
 *.ini
 
 # VSCode
