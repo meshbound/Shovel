@@ -1,17 +1,21 @@
 import random
 import numpy
 import hashlib
-import lib.config as config
+from lib.config import get_config
+from configobj import ConfigObj
 from PIL import Image
 from PIL import ImageDraw, ImageFont
 from moviepy.editor import ImageClip
 from openai import OpenAI
 
 class ImageGenerator:
-    def __init__(self):
-        self._text_gen_config: dict = config.get_value("text_gen")
+    def __init__(self, use_placeholder: bool = False):
+        self.use_placeholder = use_placeholder
+        if use_placeholder:
+            return
+        self._text_gen_config: ConfigObj = get_config()["text_gen"]
         self._client = OpenAI(
-            api_key=self._text_gen_config.get("api_key"),
+            api_key=self._text_gen_config["api_key"],
         )
 
     @staticmethod
@@ -35,10 +39,10 @@ class ImageGenerator:
 
         return ImageClip(numpy.array(image))
 
-    def generate_image(self, prompt: str, use_placeholder: bool = False) -> ImageClip:
+    def generate_image(self, prompt: str) -> ImageClip:
         print(f"Generating image from prompt: {prompt}")
 
-        if use_placeholder:
+        if self.use_placeholder:
             return ImageGenerator.__generate_placeholder_image(prompt)
         
         response = self._client.images.generate(

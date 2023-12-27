@@ -1,21 +1,51 @@
-import json
+from lib.util import get_files_in_dir, get_subdir_path
+from configobj import ConfigObj
+from PIL import Image
+import os
 
-_config: dict = None
-_fp = None
+_config_path = "./shovel.ini"
+_config = None
 
-def __generate_default_config():
-    return {
-        "video": {
-            "width": 1080,
-            "height": 1920,
-            "fps": 30
-        },
-        "captions": {
-            "font": "Arial",
-            "font_size": 24
-        },
-        "text_gen": {
-            "prompt": """Generate TikTok video scripts using the given prompt.
+def get_config():
+    if _config == None:
+        load_config()
+    return _config
+
+def load_config():
+    global _config
+    if not os.path.exists(_config_path):
+        print("No config found!")
+        write_default_config()
+    _config = ConfigObj(_config_path)
+    verify_file_structure()
+    verify_assets()
+
+def write_default_config():
+    print("Writing new config...")
+    config = ConfigObj()
+    config.filename = _config_path
+
+    config["dirs"] = {}
+    dirs = config["dirs"]
+    dirs["root"] = "./stash/"
+    dirs["sub_dirs"] = {}
+    sub_dirs = dirs["sub_dirs"]
+    sub_dirs["video_out"] = "out"
+    sub_dirs["assets_background"] = "backgrounds"
+    sub_dirs["assets_overlay"] = "overlays"
+    sub_dirs["assets_bottom"] = "bottoms"
+    sub_dirs["assets_sfx"] = "sfx"
+
+    config["video"] = {}
+    video = config["video"]
+    video["padding"] = 0.2
+    video["max_caption_chunks"] = 2
+    video["font"] = "Arial-Bold"
+    video["font_size"] = 50
+
+    config["text_gen"] = {}
+    text_gen = config["text_gen"]
+    text_gen["prompt"] = """Generate TikTok video scripts using the given prompt.
 Example:
 
 This boy has an incredible talent. His name is Jacob Mello.
@@ -25,39 +55,46 @@ They all laughed at him for eating powdered sugar because he could not afford gr
 [img:boy eating granulated sugar]
 
 Little did they know what amazing talent he possessed.
-[img:boy doing flossing dance]""",
-            "api_key": "",
-            "temperature": 0.25,
-            "max_length": 256
-        },
-        "image_gen": {
-            "width": 512,
-            "height": 512
-        },
-        "speech_gen": {
+[img:boy doing flossing dance]"""
+    text_gen["api_key"] = ""
+    text_gen["model"] = ""
+    text_gen["temperature"] = 0.25
+    text_gen["max_length"] = 256
 
-        }
-    }
+    config["image_gen"] = {}
+    image_gen = config["image_gen"]
+    image_gen["width"] = 512
+    image_gen["height"] = 512
 
-def load(config_path: str = "config.json"):
-    global _config, _fp
-    try:
-        _fp = open(config_path, "r+")
-        _config = json.load(_fp)
-    except FileNotFoundError:
-        _fp = open(config_path, "w")
-        _config = __generate_default_config()
-        json.dump(_config, _fp, indent=4)
-    
-def get_value(key: str):
-    global _config
-    if _config is None:
-        load()
-    return _config[key]
+    config["speech_gen"] = {}
 
-def set_value(key: str, value):
-    global _config
-    if _config is None:
-        load()
-    _config[key] = value
-    json.dump(_config, _fp, indent=4)
+    config.write()
+
+def verify_file_structure():
+    root = _config["dirs"]["root"]
+    if not os.path.exists(root):
+        os.mkdir(root)
+    sub_dirs = _config["dirs"]["sub_dirs"]
+    for sub_dir in sub_dirs:
+        dir_path = root + sub_dirs[sub_dir]
+        if not os.path.exists(dir_path):
+            os.mkdir(dir_path)
+
+def verify_assets():
+    backgrounds_path = get_subdir_path(_config, "assets_background")
+    background_files = get_files_in_dir(backgrounds_path)
+    valid_backgrounds = len(background_files)
+    for f in background_files:
+        file_path = backgrounds_path + "/" + f
+        i = Image.open(file_path)
+        if i.size[0] != 1080 or i.size[1] != 1920:
+            print("[WARN]\tBackground " + f + " has illegal size! Moving...")
+            i.close()
+            if not os.path.exists(backgrounds_path + "/bad/"):
+                os.mkdir(backgrounds_path + "/bad/")
+            os.replace(file_path, backgrounds_path + "/bad/" + f)
+            valid_backgrounds -= 1
+    if valid_backgrounds == 0:
+        print("Generating blank background...")
+        image = Image.new('RGB', (1080, 1920), (256,256,256))
+        image.save(backgrounds_path + "/blank.png")
