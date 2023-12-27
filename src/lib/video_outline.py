@@ -18,12 +18,19 @@ class ShotOutline:
         self.prompt = prompt
 
 
+class ShotOutlineMeta:
+    def __init__(self, title: str, description: str, shot_outlines: list[ShotOutline]):
+        self.title = title
+        self.description = description
+        self.shot_outlines = shot_outlines
+
+
 class VideoOutline:
     def __init__(self, shots: list[Shot]) -> None:
         self.shots = shots
 
     @staticmethod
-    async def generate(shot_outlines: list[ShotOutline]):
+    async def generate(shot_outline_meta: ShotOutlineMeta):
         shots = []
         image_generator = generate_image.ImageGenerator(use_placeholder=True)
         speech_generator = generate_speech.SpeechGenerator(use_placeholder=True)
@@ -32,6 +39,7 @@ class VideoOutline:
 
         image_generation_coroutines: list[asyncio.Future] = []
         speech_generation_coroutines: list[asyncio.Future] = []
+        shot_outlines = shot_outline_meta.shot_outlines
         for i, shot_outline in enumerate(shot_outlines):
             print(f"Queuing shot {i+1}/{len(shot_outlines)}")
             speech_future = asyncio.ensure_future(speech_generator.generate_speech(shot_outline.text))
