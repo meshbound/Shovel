@@ -5,11 +5,13 @@ import math
 import time
 import urllib.request
 from lib.config import get_config
+from lib.util import get_subdir_path
 from configobj import ConfigObj
 from PIL import Image
 from PIL import ImageDraw, ImageFont
 from moviepy.editor import ImageClip
 from openai import OpenAI
+# from lib.stability.api import StabilityAPI
 
 class ImageGenerator:
     def __init__(self, use_placeholder: bool = False):
@@ -63,8 +65,7 @@ class ImageGenerator:
     @staticmethod
     def __download_image(image_url: str) -> ImageClip:
         filename = math.floor(time.time() * 1000)
-        subdir_config = get_config()["sub_dirs"]
-        base_path = subdir_config["image_temp"]
+        base_path = get_subdir_path(get_config(), "image_temp")
         file_path = f"{base_path}/{filename}.png"
         urllib.request.urlretrieve(image_url, file_path)
         return ImageClip(file_path)
