@@ -5,7 +5,7 @@ import math
 import time
 import urllib.request
 from lib.config import get_config
-from lib.util import get_subdir_path
+from lib.util import get_subdir_path, get_unix_time_millis
 from lib.stability.api import StabilityAPI
 from configobj import ConfigObj
 from PIL import Image
@@ -59,7 +59,7 @@ class ImageGenerator:
 
     @staticmethod
     def __download_image(image_url: str) -> ImageClip:
-        filename = math.floor(time.time() * 1000)
+        filename = get_unix_time_millis()
         base_path = get_subdir_path(get_config(), "image_temp")
         file_path = f"{base_path}/{filename}.png"
         urllib.request.urlretrieve(image_url, file_path)

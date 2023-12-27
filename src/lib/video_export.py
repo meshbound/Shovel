@@ -1,5 +1,6 @@
+import time
 from lib.config import get_config
-from lib.util import get_subdir_path
+from lib.util import get_subdir_path, get_unix_time_millis
 from moviepy.editor import VideoFileClip
 
 def write_and_upload_video(video: VideoFileClip):
@@ -11,6 +12,7 @@ def upload_video():
     raise NotImplementedError
 
 def write_video(video: VideoFileClip):
-    name = "out.mp4"
+    filename = get_unix_time_millis()
     dest_path = get_subdir_path(get_config(), "video_out")
-    video.write_videofile(f"{dest_path}/{name}",fps=24)
+    file_path = f"{dest_path}/{filename}.mp4"
+    video.write_videofile(file_path, fps=24)

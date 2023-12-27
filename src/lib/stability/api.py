@@ -4,7 +4,7 @@ import math
 import time
 from moviepy.editor import ImageClip
 from lib.config import get_config
-from lib.util import get_subdir_path
+from lib.util import get_subdir_path, get_unix_time_millis
 from lib.stability.api_types import EngineListing
 
 class StabilityAPI:
@@ -36,7 +36,7 @@ class StabilityAPI:
         response = await self.__api_call(f"generation/{engine_id}/text-to-image", "POST", json)
 
         image = response["artifacts"][0]
-        filename = math.floor(time.time() * 1000)
+        filename = get_unix_time_millis()
         base_path = get_subdir_path(get_config(), "image_temp")
         file_path = f"{base_path}/{filename}.png"
         with open(file_path, "wb") as f:
