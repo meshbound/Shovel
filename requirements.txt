@@ -5,4 +5,4 @@ configobj >= 5.0.8
 openai >= 0.28.1
 google-cloud-texttospeech >= 2.15.0
 pyttsx3 >= 2.90
-requests >= 3.2.0
+http3 >=  0.6.7

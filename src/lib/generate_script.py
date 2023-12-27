@@ -12,7 +12,7 @@ class ScriptGenerator:
             api_key=self._text_gen_config["api_key"],
         )
 
-    def generate_script(self, tags: list[str]) -> str:
+    async def generate_script(self, tags: list[str]) -> str:
         print("Generating script...")
 
         if len(tags) == 0:

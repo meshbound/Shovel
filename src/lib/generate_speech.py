@@ -16,7 +16,7 @@ class SpeechGenerator:
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "src/auth/google/" + auth_file_name
         self.client = texttospeech.TextToSpeechClient()
 
-    def generate_speech(self, text: str) -> AudioFileClip:
+    async def generate_speech(self, text: str) -> AudioFileClip:
         print(f"Generating speech from text: {text}")
 
         if self.use_placeholder:

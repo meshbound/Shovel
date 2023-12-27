@@ -6,11 +6,11 @@ import time
 import urllib.request
 from lib.config import get_config
 from lib.util import get_subdir_path
+from lib.stability.api import StabilityAPI
 from configobj import ConfigObj
 from PIL import Image
 from PIL import ImageDraw, ImageFont
 from moviepy.editor import ImageClip
-from openai import OpenAI
 # from lib.stability.api import StabilityAPI
 
 class ImageGenerator:
@@ -19,7 +19,7 @@ class ImageGenerator:
         if use_placeholder:
             return
         self._image_gen_config: ConfigObj = get_config()["image_gen"]
-        self._client = OpenAI(
+        self._client = StabilityAPI(
             api_key=self._image_gen_config["api_key"],
         )
 
@@ -44,7 +44,7 @@ class ImageGenerator:
 
         return ImageClip(numpy.array(image))
 
-    def generate_image(self, prompt: str) -> ImageClip:
+    async def generate_image(self, prompt: str) -> ImageClip:
         print(f"Generating image from prompt: {prompt}")
 
         if self.use_placeholder:
@@ -52,15 +52,10 @@ class ImageGenerator:
         
         width = self._image_gen_config["width"]
         height = self._image_gen_config["height"]
-        response = self._client.images.generate(
-            model="dall-e-2",
+        image = await self._client.text_to_image(
             prompt=prompt,
-            size=f"{width}x{height}",
-            n=1
         )
-        image_url = response.data[0].url
-        print("Generated image: " + image_url)
-        return self.__download_image(image_url)
+        return image
 
     @staticmethod
     def __download_image(image_url: str) -> ImageClip:
