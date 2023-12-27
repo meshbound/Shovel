@@ -4,7 +4,7 @@ import os
 
 def get_files_in_dir(dir_path: str) -> list[str]:
     files = [f for f in os.listdir(dir_path) 
-             if os.path.isfile(dir_path + "/" + f)]
+             if os.path.isfile(f"{dir_path}/{f}")]
     return files
 
 def random_file_from_dir(dir_path: str) -> str:

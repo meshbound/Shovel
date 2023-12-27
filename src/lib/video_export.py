@@ -1,4 +1,5 @@
 from lib.config import get_config
+from lib.util import get_subdir_path
 from moviepy.editor import VideoFileClip
 
 def write_and_upload_video(video: VideoFileClip):
@@ -11,5 +12,5 @@ def upload_video():
 
 def write_video(video: VideoFileClip):
     name = "out.mp4"
-    dest_path = get_config()["dirs"]["root"] + get_config()["dirs"]["sub_dirs"]["video_out"]
-    video.write_videofile(dest_path + "/" + name,fps=24)
+    dest_path = get_subdir_path(get_config(), "video_out")
+    video.write_videofile(f"{dest_path}/{name}",fps=24)
