@@ -14,6 +14,8 @@ class SpeechGenerator:
             return
         auth_path = get_subdir_path(get_config(), "google")
         auth_files = get_files_in_dir(auth_path)
+        if len(auth_files) == 0:
+            raise Exception("[Speech generation] No Google auth file found")
         full_path = auth_path + "/" + auth_files[0]
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = full_path
         self.client = texttospeech.TextToSpeechClient()

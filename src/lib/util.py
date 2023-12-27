@@ -18,10 +18,12 @@ def random_file_from_dir(dir_path: str) -> str:
 def get_subdir_path(config: ConfigObj, target: str) -> str:
     if target == "root":
         return None
-    for dir in config["dirs"]:
-        for subdir in config["dirs"][dir]:
+    dirs = config["dirs"]
+    for dir in dirs:
+        subdirs = config["dirs"][dir]
+        for subdir in subdirs:
             if subdir == target:
-                return config["dirs"][dir]["root"] + config["dirs"][dir][subdir]
+                return subdirs["root"] + subdirs[subdir]
     return None
 
 def get_unix_time_millis() -> int:

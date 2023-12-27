@@ -10,17 +10,22 @@ def parse_tag(text: str) -> ScriptTag:
     match = re.search(r"\[(\w+)(.*)\]", text)
     if match is None:
         return None
-    tag = match.group().strip().split(":")
-    name = tag[0][1:].strip()
-    content = tag[1][:-1].strip()
-    # print("Tag:", name, content)
-    return ScriptTag(name, content)
+    try:
+        tag = match.group().strip().split(":")
+        name = tag[0][1:].strip()
+        content = tag[1][:-1].strip()
+        return ScriptTag(name, content)
+    except:
+        raise Exception(f"Failed to parse line as tag: \"{text}\"")
     
 def parse_shot(text: str) -> ShotOutline:
-    lines = text.strip().split('\n')
-    text = lines[0].strip()
-    prompt = parse_tag(lines[1]).content
-    return ShotOutline(text, prompt)
+    try:
+        lines = text.strip().split('\n')
+        text = lines[0].strip()
+        prompt = parse_tag(lines[1]).content
+        return ShotOutline(text, prompt)
+    except:
+        raise Exception(f"Failed to parse lines as shot: \"{text}\"")
 
 def parse_text(text: str) -> ShotOutlineMeta:
     shots_text: list[str] = text.split('\n\n')
@@ -28,7 +33,6 @@ def parse_text(text: str) -> ShotOutlineMeta:
     meta = shots_text[0].split('\n')
     title: str = None
     description: str = None
-    tags: list[ScriptTag] = []
     for tag in meta:
         tag = parse_tag(tag)
         if tag.name == "title":

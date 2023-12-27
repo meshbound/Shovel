@@ -3,6 +3,9 @@ import lib.script_parser as script_parser
 from lib.video_outline import VideoOutline
 
 async def generate_video(tags: list[str]) -> VideoOutline:
+    if len(tags) == 0:
+        raise ValueError("Must provide at least one tag")
+    
     script_generator = ScriptGenerator(use_placeholder=True)
     script = await script_generator.generate_script(tags)
     shot_outline = script_parser.parse_text(script)

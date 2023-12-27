@@ -19,6 +19,9 @@ class ImageGenerator:
         if use_placeholder:
             return
         self._image_gen_config: ConfigObj = get_config()["image_gen"]
+        config_api_key = self._image_gen_config["api_key"]
+        if config_api_key is None:
+            raise Exception("[Image generation] Stability API key not set")
         self._client = StabilityAPI(
             api_key=self._image_gen_config["api_key"],
         )

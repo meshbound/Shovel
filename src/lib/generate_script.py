@@ -8,6 +8,9 @@ class ScriptGenerator:
         if use_placeholder:
             return
         self._text_gen_config: dict = get_config()["text_gen"]
+        config_api_key = self._text_gen_config["api_key"]
+        if config_api_key is None:
+            raise Exception("[Text generation] OpenAI API key not set")
         self._client = OpenAI(
             api_key=self._text_gen_config["api_key"],
         )
