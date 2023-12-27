@@ -10,15 +10,16 @@ def parse_tag(text: str) -> ScriptTag:
     match = re.search(r"\[(\w+)(.*)\]", text)
     if match is None:
         return None
-    name = match.group(1)
-    content = match.group(2)
-    print("Tag: ", name, content)
+    tag = match.group().strip().split(":")
+    name = tag[0][1:].strip()
+    content = tag[1][:-1].strip()
+    # print("Tag:", name, content)
     return ScriptTag(name, content)
     
 def parse_shot(text: str) -> ShotOutline:
     lines = text.strip().split('\n')
     text = lines[0].strip()
-    prompt = lines[1].replace("[img:", "").replace("]", "").strip()
+    prompt = parse_tag(lines[1]).content
     return ShotOutline(text, prompt)
 
 def parse_text(text: str) -> ShotOutlineMeta:
@@ -36,7 +37,8 @@ def parse_text(text: str) -> ShotOutlineMeta:
             description = tag.content
 
     shots: list[ShotOutline] = []
-    for shot_text in shots_text[3:]:
+    for shot_text in shots_text[1:]:
+        print(shot_text)
         shots.append(parse_shot(shot_text))
     
     shot_outline_meta = ShotOutlineMeta(title, description, shots)

@@ -10,6 +10,9 @@ class Shot:
         self.text = text
         self.speech = speech
         self.image = image
+    
+    def __str__(self) -> str:
+        return f"\"{self.text}\""
 
 
 class ShotOutline:
@@ -42,6 +45,8 @@ class VideoOutline:
         shot_outlines = shot_outline_meta.shot_outlines
         for i, shot_outline in enumerate(shot_outlines):
             print(f"Queuing shot {i+1}/{len(shot_outlines)}")
+            print(shot_outline.text)
+            print(shot_outline.prompt)
             speech_future = asyncio.ensure_future(speech_generator.generate_speech(shot_outline.text))
             image_future = asyncio.ensure_future(image_generator.generate_image(shot_outline.prompt))
             speech_generation_coroutines.append(speech_future)
@@ -55,6 +60,7 @@ class VideoOutline:
             generated_speech = speech_generation_coroutines[i].result()
             generated_image = image_generation_coroutines[i].result()
             shot = Shot(shot_outline.text, generated_speech, generated_image)
+            print("Shot:", shot)
             shots.append(shot)
 
         return VideoOutline(shots)
