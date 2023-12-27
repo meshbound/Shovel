@@ -2,6 +2,7 @@ import os
 import time
 import math
 import pyttsx3
+from lib.config import get_config
 from google.cloud import texttospeech
 from moviepy.editor import AudioFileClip
 
@@ -46,7 +47,9 @@ class SpeechGenerator:
         engine.setProperty('volume', 0.9)  # Volume level (0.0 to 1.0)
 
         filename = math.floor(time.time() * 1000)
-        file_path = f"src/lib/audio_tmp/{filename}.wav"
+        subdir_config = get_config()["sub_dirs"]
+        base_path = subdir_config["audio_temp"]
+        file_path = f"{base_path}/{filename}.wav"
         engine.save_to_file(text, file_path)
 
         while not engine.isBusy():
@@ -59,7 +62,9 @@ class SpeechGenerator:
     @staticmethod
     def write_to_timestamped_file(data) -> AudioFileClip:
         filename = math.floor(time.time() * 1000)
-        file_path = f"src/lib/audio_tmp/{filename}.mp3"
+        subdir_config = get_config()["sub_dirs"]
+        base_path = subdir_config["audio_temp"]
+        file_path = f"{base_path}/{filename}.mp3"
         with open(file_path, "wb") as out:
             out.write(data)
 

@@ -35,6 +35,8 @@ def write_default_config():
     sub_dirs["assets_overlay"] = "overlays"
     sub_dirs["assets_bottom"] = "bottoms"
     sub_dirs["assets_sfx"] = "sfx"
+    sub_dirs["audio_temp"] = "tmp/audio"
+    sub_dirs["image_temp"] = "tmp/image"
 
     config["video"] = {}
     video = config["video"]
@@ -66,6 +68,8 @@ Little did they know what amazing talent he possessed.
     image_gen = config["image_gen"]
     image_gen["width"] = 512
     image_gen["height"] = 512
+    image_gen["api_key"] = ""
+
 
     config["speech_gen"] = {}
 
@@ -73,13 +77,11 @@ Little did they know what amazing talent he possessed.
 
 def verify_file_structure():
     root = _config["dirs"]["root"]
-    if not os.path.exists(root):
-        os.mkdir(root)
     sub_dirs = _config["dirs"]["sub_dirs"]
     for sub_dir in sub_dirs:
         dir_path = root + sub_dirs[sub_dir]
         if not os.path.exists(dir_path):
-            os.mkdir(dir_path)
+            os.makedirs(dir_path, exist_ok=True)
 
 def verify_assets():
     backgrounds_path = get_subdir_path(_config, "assets_background")

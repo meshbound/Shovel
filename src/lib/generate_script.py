@@ -22,9 +22,10 @@ class ScriptGenerator:
             with open("src/lib/placeholder_script.txt", "r") as f:
                 return f.read()
 
+        temperature = float(self._text_gen_config["temperature"])
         response = self._client.chat.completions.create(
             model=self._text_gen_config["model"],
-            temperature=self._text_gen_config["temperature"],
+            temperature=temperature,
             # max_length=_text_gen_config.get("max_length"),
             messages=[
                 {

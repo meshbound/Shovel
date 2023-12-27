@@ -1,6 +1,9 @@
 import random
 import numpy
 import hashlib
+import math
+import time
+import urllib.request
 from lib.config import get_config
 from configobj import ConfigObj
 from PIL import Image
@@ -13,9 +16,9 @@ class ImageGenerator:
         self.use_placeholder = use_placeholder
         if use_placeholder:
             return
-        self._text_gen_config: ConfigObj = get_config()["text_gen"]
+        self._image_gen_config: ConfigObj = get_config()["image_gen"]
         self._client = OpenAI(
-            api_key=self._text_gen_config["api_key"],
+            api_key=self._image_gen_config["api_key"],
         )
 
     @staticmethod
@@ -45,11 +48,23 @@ class ImageGenerator:
         if self.use_placeholder:
             return ImageGenerator.__generate_placeholder_image(prompt)
         
+        width = self._image_gen_config["width"]
+        height = self._image_gen_config["height"]
         response = self._client.images.generate(
             model="dall-e-2",
             prompt=prompt,
-            size="512x512",
+            size=f"{width}x{height}",
             n=1
         )
         image_url = response.data[0].url
         print("Generated image: " + image_url)
+        return self.__download_image(image_url)
+
+    @staticmethod
+    def __download_image(image_url: str) -> ImageClip:
+        filename = math.floor(time.time() * 1000)
+        subdir_config = get_config()["sub_dirs"]
+        base_path = subdir_config["image_temp"]
+        file_path = f"{base_path}/{filename}.png"
+        urllib.request.urlretrieve(image_url, file_path)
+        return ImageClip(file_path)

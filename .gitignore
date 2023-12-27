@@ -1,5 +1,4 @@
 src/auth/google/*
-src/lib/audio_tmp/*
 stash/
 *.ini
 

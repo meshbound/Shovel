@@ -5,7 +5,7 @@ from lib.video_export import write_video
 
 load_config()
 
-video = generate_video(["dank", "ohio", "skibiditoilet"])
+video = generate_video(["minecraft", "building", "zombies"])
 patched = patch_video(video)
 write_video(patched)
 
