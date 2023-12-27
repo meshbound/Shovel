@@ -39,7 +39,8 @@ def write_default_config():
     config["video"] = {}
     video = config["video"]
     video["padding"] = 0.2
-    video["max_caption_chunks"] = 2
+    video["caption_chunks"] = 2
+    video["caption_speed"] = 1.4
     video["font"] = "Arial-Bold"
     video["font_size"] = 50
 

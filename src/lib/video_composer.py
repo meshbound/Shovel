@@ -8,7 +8,8 @@ import math
 
 def patch_video(outline: VideoOutline) -> VideoFileClip:
     padding = float(get_config()["video"]["padding"])
-    chunks = int(get_config()["video"]["max_caption_chunks"])
+    caption_chunks = int(get_config()["video"]["caption_chunks"])
+    caption_speed = float(get_config()["video"]["caption_speed"])
 
     patched_duration = 0
     video_clips = []
@@ -17,50 +18,53 @@ def patch_video(outline: VideoOutline) -> VideoFileClip:
     for i in range (0, len(outline.shots)):
         s = outline.shots[i]
         duration = s.speech.duration + padding
-        patched_duration += duration
 
-        image = s.image.set_start(duration * i)
+        image = s.image.set_start(patched_duration)
         image = image.set_duration(duration)
         image = resize.resize(image, width=1080, height=1080)
         video_clips.append(image)
         
         words = s.text.split()
-        wps = math.ceil(len(words) / duration)
-        twps = wps * chunks
-        captions_count = 0
+        wps = float(len(words)) / duration
+        spw = 1.0 / wps
+        twps = math.ceil(wps) * caption_chunks
+        patched_caption_duration = 0
         while len(words) > 0:
+            caption_duration = 0
             curr = []
-            x = 0
-            if len(words) - twps >= 0:
+            if len(words) - twps > 0:
                 curr = words[:twps]
                 words = words[twps:]
             else:
+                caption_duration = 0.5
                 curr = words
                 words = []
 
+            caption_duration += spw * len(curr) * 1.0 / caption_speed
             text = " ".join(curr)
             zoom_fun = lambda t: 1 / (1.0 + math.e**(-20.0*(t-0.2)))
 
             caption = TextClip(text, fontsize=50,
                                 color="black", font="Arial-bold", 
                                 stroke_width=30, stroke_color="black")
-            caption = caption.set_start(duration * i + captions_count * chunks)
-            caption = caption.set_duration(chunks)
+            caption = caption.set_start(patched_duration + patched_caption_duration)
+            caption = caption.set_duration(caption_duration)
             caption = resize.resize(caption, zoom_fun)
             caption = caption.set_position(("center", 1070))
             video_clips.append(caption)
 
             caption = TextClip(text, fontsize=50,
                                 color="white", font="Arial-bold")
-            caption = caption.set_start(duration * i + captions_count * chunks)
-            caption = caption.set_duration(chunks)
+            caption = caption.set_start(patched_duration + patched_caption_duration)
+            caption = caption.set_duration(caption_duration)
             caption = resize.resize(caption, zoom_fun)
             caption = caption.set_position(("center", 1080))
             video_clips.append(caption)
-            captions_count += 1
+            patched_caption_duration += caption_duration
 
-        audio = s.speech.set_start(duration * i)
+        audio = s.speech.set_start(patched_duration)
         audio_clips.append(audio)
+        patched_duration += duration
 
     backgrounds_path = get_subdir_path(get_config(), "assets_background")
     background_select = random_file_from_dir(backgrounds_path)
