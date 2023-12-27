@@ -12,9 +12,10 @@ class SpeechGenerator:
         self.use_placeholder = use_placeholder
         if use_placeholder:
             return
-        auth_path = get_subdir_path(get_config(),"google")
+        auth_path = get_subdir_path(get_config(), "google")
         auth_files = get_files_in_dir(auth_path)
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = auth_files[0]
+        full_path = auth_path + "/" + auth_files[0]
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = full_path
         self.client = texttospeech.TextToSpeechClient()
 
     async def generate_speech(self, text: str) -> AudioFileClip:
