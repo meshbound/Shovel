@@ -14,14 +14,13 @@ def get_config():
 def load_config():
     global _config
     if not os.path.exists(_config_path):
-        print("No config found!")
+        print("No config found, creating one...")
         write_default_config()
     _config = ConfigObj(_config_path)
     verify_file_structure()
     verify_assets()
 
 def write_default_config():
-    print("Writing new config...")
     config = ConfigObj()
     config.filename = _config_path
 
@@ -45,6 +44,7 @@ def write_default_config():
 
     config["video"] = {}
     video = config["video"]
+    video["framerate"] = 24
     video["padding"] = 0.2
     video["caption_chunks"] = 2
     video["caption_speed"] = 1.4

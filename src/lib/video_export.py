@@ -15,4 +15,5 @@ def write_video(video: VideoFileClip):
     filename = get_unix_time_millis()
     dest_path = get_subdir_path(get_config(), "video_out")
     file_path = f"{dest_path}/{filename}.mp4"
-    video.write_videofile(file_path, fps=24)
+    fps = float(get_config()["video"]["framerate"])
+    video.write_videofile(file_path, fps=fps)
