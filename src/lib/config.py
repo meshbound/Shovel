@@ -31,10 +31,10 @@ def write_default_config():
     dirs["sub_dirs"] = {}
     sub_dirs = dirs["sub_dirs"]
     sub_dirs["video_out"] = "out"
-    sub_dirs["assets_background"] = "backgrounds"
-    sub_dirs["assets_overlay"] = "overlays"
-    sub_dirs["assets_bottom"] = "bottoms"
-    sub_dirs["assets_sfx"] = "sfx"
+    sub_dirs["background_assets"] = "assets/backgrounds"
+    sub_dirs["overlay_assets"] = "assets/overlays"
+    sub_dirs["bottom_assets"] = "assets/bottoms"
+    sub_dirs["music_assets"] = "assets/music"
     sub_dirs["audio_temp"] = "tmp/audio"
     sub_dirs["image_temp"] = "tmp/image"
 
@@ -43,8 +43,12 @@ def write_default_config():
     video["padding"] = 0.2
     video["caption_chunks"] = 2
     video["caption_speed"] = 1.4
-    video["font"] = "Arial-Bold"
+    video["font"] = "Arial-bold"
     video["font_size"] = 50
+    video["music_lead"] = 10
+
+    config["upload"] = {}
+    upload = config["video"]
 
     config["text_gen"] = {}
     text_gen = config["text_gen"]
@@ -70,7 +74,6 @@ Little did they know what amazing talent he possessed.
     image_gen["height"] = 512
     image_gen["api_key"] = ""
 
-
     config["speech_gen"] = {}
 
     config.write()
@@ -84,14 +87,14 @@ def verify_file_structure():
             os.makedirs(dir_path, exist_ok=True)
 
 def verify_assets():
-    backgrounds_path = get_subdir_path(_config, "assets_background")
+    backgrounds_path = get_subdir_path(_config, "background_assets")
     background_files = get_files_in_dir(backgrounds_path)
     valid_backgrounds = len(background_files)
     for f in background_files:
         file_path = backgrounds_path + "/" + f
         i = Image.open(file_path)
         if i.size[0] != 1080 or i.size[1] != 1920:
-            print("[WARN]\tBackground " + f + " has illegal size! Moving...")
+            print(f"[WARN]\tBackground {f} has illegal size! Moving...")
             i.close()
             if not os.path.exists(backgrounds_path + "/bad/"):
                 os.mkdir(backgrounds_path + "/bad/")
