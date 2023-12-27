@@ -41,23 +41,17 @@ class SpeechGenerator:
     
     @staticmethod
     def generate_placeholder_speech(text) -> str:
-        # Initialize the TTS engine
         engine = pyttsx3.init()
-
-        # Set properties (optional)
         engine.setProperty('rate', 150)  # Speed of speech
         engine.setProperty('volume', 0.9)  # Volume level (0.0 to 1.0)
 
-        # Save to audio file (WAV format)
         filename = math.floor(time.time() * 1000)
         file_path = f"src/lib/audio_tmp/{filename}.wav"
         engine.save_to_file(text, file_path)
 
-        # Wait for the file to be created
         while not engine.isBusy():
             time.sleep(0.1)
 
-        # Run the TTS engine
         engine.runAndWait()
 
         return file_path
