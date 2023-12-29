@@ -50,10 +50,16 @@ def write_default_config():
     video["caption_speed"] = 1.4
     video["font"] = "Arial-bold"
     video["font_size"] = 50
-    video["music_lead"] = 10
+    video["music_lead"] = 10  
 
     config["upload"] = {}
-    upload = config["video"]
+    upload = config["upload"]
+    upload["visibility"] = "private"
+    upload["persistent_tags"] = "shorts,fyp"
+    upload["include_generation_tags"] = True
+    upload["default_language"] = "en-US"
+    upload["embeddable"] = True
+    upload["public_stats"] = True
 
     config["text_gen"] = {}
     text_gen = config["text_gen"]
