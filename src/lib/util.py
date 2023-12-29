@@ -3,9 +3,11 @@ import random
 import os
 import time
 
-def get_files_in_dir(dir_path: str) -> list[str]:
+def get_files_in_dir(dir_path: str, extension: str = None) -> list[str]:
     files = [f for f in os.listdir(dir_path) 
-             if os.path.isfile(f"{dir_path}/{f}")]
+             if os.path.isfile(f"{dir_path}/{f}") 
+             and (f.endswith(extension) 
+                  if extension != None else True)]
     return files
 
 def random_file_from_dir(dir_path: str) -> str:

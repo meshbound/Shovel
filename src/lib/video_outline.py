@@ -29,7 +29,9 @@ class ShotOutlineMeta:
 
 
 class VideoOutline:
-    def __init__(self, shots: list[Shot]) -> None:
+    def __init__(self, title: str, description: str, shots: list[Shot]) -> None:
+        self.title = title
+        self.description = description
         self.shots = shots
 
     @staticmethod
@@ -63,4 +65,6 @@ class VideoOutline:
             print("Shot:", shot)
             shots.append(shot)
 
-        return VideoOutline(shots)
+        title = shot_outline_meta.title
+        description = shot_outline_meta.description
+        return VideoOutline(title, description, shots)
