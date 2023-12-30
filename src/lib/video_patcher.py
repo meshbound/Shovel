@@ -1,6 +1,6 @@
 from lib.util import random_file_from_dir, get_subdir_path
 from lib.config import get_config
-from lib.audio_cleaner import get_silence
+from lib.audio_silence import get_silence
 from lib.video_outline import VideoOutline
 from moviepy.video.fx import resize
 from moviepy.editor import *
