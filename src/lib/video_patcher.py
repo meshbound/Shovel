@@ -11,6 +11,7 @@ def patch_video(outline: VideoOutline) -> VideoFileClip:
     padding = float(get_config()["video"]["padding"])
     caption_chunks = int(get_config()["video"]["caption_chunks"])
     caption_speed = float(get_config()["video"]["caption_speed"])
+    caption_steal = int(get_config()["video"]["caption_steal"])
     font = get_config()["video"]["font"]
     font_size = float(get_config()["video"]["font_size"])
     music_lead = float(get_config()["video"]["music_lead"])
@@ -43,8 +44,9 @@ def patch_video(outline: VideoOutline) -> VideoFileClip:
         while len(words) > 0:
             curr = []
             if len(words) - twps > 0:
-                curr = words[:twps]
-                words = words[twps:]
+                stolen = attempt_steal(words[twps:], caption_steal)
+                curr = words[:twps + stolen]
+                words = words[stolen + twps:]
             else:
                 curr = words
                 words = []
@@ -102,3 +104,21 @@ def patch_video(outline: VideoOutline) -> VideoFileClip:
     patched.audio = CompositeAudioClip(audio_clips)
 
     return patched
+
+def attempt_steal(next_words: [str], steal: int) -> [str]:
+    endings = [".",",","?","!"]
+    stolen = 0
+    for word in next_words:
+        if stolen < steal:
+            stolen += 1
+            if ends_with_any(word, endings):
+                break
+        else:
+            return 0
+    return stolen
+
+def ends_with_any(word: str, endings: [str]):
+    for end in endings:
+        if word.endswith(end):
+            return True
+    return False
