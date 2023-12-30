@@ -1,5 +1,6 @@
 from lib.util import random_file_from_dir, get_subdir_path
 from lib.config import get_config
+from lib.audio_silence import get_silence
 from lib.video_outline import VideoOutline
 from moviepy.video.fx import resize
 from moviepy.editor import *
@@ -19,35 +20,40 @@ def patch_video(outline: VideoOutline) -> VideoFileClip:
     audio_clips = []
 
     for i in range (0, len(outline.shots)):
+        
         s = outline.shots[i]
-        duration = s.speech.duration + padding
+        speech = s.speech
+        image = s.image
+        text = s.text
 
-        image = s.image.set_start(patched_duration)
+        silence_start, silence_end = get_silence(speech)
+        duration = speech.duration + padding
+
+        image = image.set_start(patched_duration)
         image = image.set_duration(duration)
         image = resize.resize(image, width=1080, height=1080)
         video_clips.append(image)
         
-        words = s.text.split()
-        wps = float(len(words)) / duration
+        words = text.split()
+        trimmed_duration = speech.duration - (silence_start + silence_end)
+        wps = float(len(words)) / trimmed_duration
         spw = 1.0 / wps
         twps = math.ceil(wps) * caption_chunks
-        patched_caption_duration = 0
+        patched_caption_duration = silence_start
         while len(words) > 0:
-            caption_duration = 0
             curr = []
             if len(words) - twps > 0:
                 curr = words[:twps]
                 words = words[twps:]
             else:
-                caption_duration = 0.5
                 curr = words
                 words = []
 
-            caption_duration += spw * len(curr) * 1.0 / caption_speed
-            text = " ".join(curr)
+            caption_duration = spw * len(curr) * 1.0 / caption_speed
+            caption_text = " ".join(curr)
             zoom_fun = lambda t: 1 / (1.0 + math.e**(-20.0*(t-0.2)))
 
-            caption = TextClip(text, fontsize=font_size,
+            caption = TextClip(caption_text, fontsize=font_size,
                                 color="black", font=font, 
                                 stroke_width=30, stroke_color="black")
             caption = caption.set_start(patched_duration + patched_caption_duration)
@@ -56,7 +62,7 @@ def patch_video(outline: VideoOutline) -> VideoFileClip:
             caption = caption.set_position(("center", 1070))
             video_clips.append(caption)
 
-            caption = TextClip(text, fontsize=font_size,
+            caption = TextClip(caption_text, fontsize=font_size,
                                 color="white", font=font)
             caption = caption.set_start(patched_duration + patched_caption_duration)
             caption = caption.set_duration(caption_duration)
@@ -65,7 +71,7 @@ def patch_video(outline: VideoOutline) -> VideoFileClip:
             video_clips.append(caption)
             patched_caption_duration += caption_duration
 
-        audio = s.speech.set_start(patched_duration)
+        audio = speech.set_start(patched_duration)
         audio_clips.append(audio)
         patched_duration += duration
 
