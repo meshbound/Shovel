@@ -44,6 +44,7 @@ def write_default_config():
 
     config["video"] = {}
     video = config["video"]
+    video["max_exports"] = 100
     video["framerate"] = 24
     video["padding"] = 0.2
     video["caption_chunks"] = 2
@@ -87,6 +88,8 @@ Little did they know what amazing talent he possessed.
     image_gen["api_key"] = ""
 
     config["speech_gen"] = {}
+    speech_gen = config["speech_gen"]
+    speech_gen["always_preserve"] = False
 
     config.write()
 

@@ -30,3 +30,11 @@ def get_subdir_path(config: ConfigObj, target: str) -> str:
 
 def get_unix_time_millis() -> int:
     return int(time.time() * 1000)
+
+def clean_dir(dir_path: str, extension: str = None, preserve: int = 1):
+    files = get_files_in_dir(dir_path, extension)
+    list.reverse(files)
+    files = files[preserve:]
+    for file in files:
+        os.remove(f"{dir_path}/{file}")
+        

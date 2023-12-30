@@ -1,5 +1,5 @@
 from lib.config import get_config
-from lib.util import get_subdir_path, get_files_in_dir, get_unix_time_millis
+from lib.util import get_subdir_path, get_files_in_dir, get_unix_time_millis, clean_dir
 from lib.video_outline import VideoOutline
 from moviepy.editor import VideoFileClip
 from simple_youtube_api.Channel import Channel
@@ -24,6 +24,7 @@ class VideoExporter:
 
     def write_and_upload_video(self, video: VideoFileClip, outline: VideoOutline, tags: list[str] = []):
         path = self.write_video(video)
+        self.clean_exports()
         self.upload_video(path, outline, tags)
  
     def upload_video(self, video_path: str, outline: VideoOutline, tags: list[str] = []) -> bool:
@@ -74,3 +75,9 @@ class VideoExporter:
         fps = float(get_config()["video"]["framerate"])
         video.write_videofile(file_path, fps=fps)
         return file_path
+    
+    @staticmethod
+    def clean_exports():
+        dest_path = get_subdir_path(get_config(), "video_out")
+        max_exports = int(get_config()["video"]["max_exports"])
+        clean_dir(dest_path, ".mp4", max_exports)
