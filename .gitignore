@@ -2,7 +2,7 @@ src/auth/google/*
 stash/
 auth/
 *.ini
-*TEMP_MPY_wvf_snd.mp3
+*TEMP*.mp3
 
 # VSCode
 .vscode/
