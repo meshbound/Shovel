@@ -12,7 +12,6 @@ if get_config()["video"]["last_temp_only"] == "True":
 async def create_video(tags):
     outline = await generate_video(tags)
     video = patch_video(outline)
-    print(outline)
 
     video_exporter = VideoExporter(do_not_upload=True)
     video_exporter.write_and_upload_video(video, outline, tags)

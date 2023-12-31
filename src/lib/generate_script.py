@@ -1,4 +1,5 @@
-from lib.config import get_config
+from lib.util import get_unix_time_millis
+from lib.config import get_config, get_subdir_path
 from configobj import ConfigObj
 from openai import OpenAI
 
@@ -41,4 +42,10 @@ class ScriptGenerator:
                 }
             ],
         )
-        return response.choices[0].message.content
+        script = response.choices[0].message.content
+        filename = get_unix_time_millis()
+        base_dir = get_subdir_path(get_config(), "text_temp")
+        path = f"{base_dir}/{filename}.txt"
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(script)
+        return script
