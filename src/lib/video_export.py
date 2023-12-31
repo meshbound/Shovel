@@ -33,7 +33,7 @@ class VideoExporter:
         print("Uploading video...")
         video = LocalVideo(file_path=video_path)
         
-        include_generation_tags = bool(get_config()["upload"]["include_generation_tags"])
+        include_generation_tags = get_config()["upload"]["include_generation_tags"] == "True"
         if not include_generation_tags:
             tags = []
         p_tags = get_config()["upload"]["persistent_tags"]
@@ -44,9 +44,9 @@ class VideoExporter:
                 for tag in tags]
 
         default_language = get_config()["upload"]["default_language"]
-        embeddable = bool(get_config()["upload"]["embeddable"])
+        embeddable = get_config()["upload"]["embeddable"] == "True"
         visibility = get_config()["upload"]["visibility"]
-        public_stats = bool(get_config()["upload"]["public_stats"])
+        public_stats = get_config()["upload"]["public_stats"] == "True"
 
         video.set_title(outline.title)
         video.set_description(outline.description)

@@ -8,3 +8,4 @@ pyttsx3 >= 2.90
 http3 >=  0.6.7
 simple-youtube-api >= 0.2.8
 librosa >= 0.10.1
+imgkit >= 1.2.3

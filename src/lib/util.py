@@ -37,4 +37,8 @@ def clean_dir(dir_path: str, extension: str = None, preserve: int = 1):
     files = files[preserve:]
     for file in files:
         os.remove(f"{dir_path}/{file}")
-        
+
+def clean_dirs(config: ConfigObj, targets: [(str, str)]):
+    for dir, extension in targets:
+        dir_path = get_subdir_path(config, dir)
+        clean_dir(dir_path, extension, 0)

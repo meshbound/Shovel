@@ -1,6 +1,7 @@
 from lib.util import random_file_from_dir, get_subdir_path
 from lib.config import get_config
 from lib.audio_silence import get_silence
+from lib.video_text import text_to_image
 from lib.video_outline import VideoOutline
 from moviepy.video.fx import resize
 from moviepy.editor import *
@@ -12,8 +13,11 @@ def patch_video(outline: VideoOutline) -> VideoFileClip:
     caption_chunks = int(get_config()["video"]["caption_chunks"])
     caption_speed = float(get_config()["video"]["caption_speed"])
     caption_steal = int(get_config()["video"]["caption_steal"])
-    font = get_config()["video"]["font"]
-    font_size = float(get_config()["video"]["font_size"])
+    font_name = get_config()["video"]["font_name"]
+    font_size = int(get_config()["video"]["font_size"])
+    font_color = get_config()["video"]["font_color"]
+    outline_ratio = float(get_config()["video"]["outline_ratio"])
+    outline_color = get_config()["video"]["outline_color"]
     music_lead = float(get_config()["video"]["music_lead"])
 
     patched_duration = 0
@@ -57,22 +61,15 @@ def patch_video(outline: VideoOutline) -> VideoFileClip:
             caption_text = " ".join(curr)
             zoom_fun = lambda t: 1 / (1.0 + math.e**(-20.0*(t-0.2)))
 
-            caption = TextClip(caption_text, fontsize=font_size,
-                                color="black", font=font, 
-                                stroke_width=30, stroke_color="black")
+            caption = text_to_image(text=caption_text, font_size=font_size, font_name=font_name,
+                                    font_color=font_color, outline_ratio=outline_ratio,
+                                    outline_color=outline_color)
             caption = caption.set_start(patched_duration + patched_caption_duration)
             caption = caption.set_duration(caption_duration)
             caption = resize.resize(caption, zoom_fun)
-            caption = caption.set_position(("center", 1070))
+            caption = caption.set_position(("center", 1040))
             video_clips.append(caption)
-
-            caption = TextClip(caption_text, fontsize=font_size,
-                                color="white", font=font)
-            caption = caption.set_start(patched_duration + patched_caption_duration)
-            caption = caption.set_duration(caption_duration)
-            caption = resize.resize(caption, zoom_fun)
-            caption = caption.set_position(("center", 1080))
-            video_clips.append(caption)
+            
             patched_caption_duration += caption_duration
 
         audio = speech.set_start(patched_duration)
