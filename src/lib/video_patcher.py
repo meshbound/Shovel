@@ -1,6 +1,7 @@
 from lib.util import random_file_from_dir, get_subdir_path
 from lib.config import get_config
 from lib.audio_silence import get_silence
+from lib.video_text import text_to_image
 from lib.video_outline import VideoOutline
 from moviepy.video.fx import resize
 from moviepy.editor import *
@@ -11,8 +12,12 @@ def patch_video(outline: VideoOutline) -> VideoFileClip:
     padding = float(get_config()["video"]["padding"])
     caption_chunks = int(get_config()["video"]["caption_chunks"])
     caption_speed = float(get_config()["video"]["caption_speed"])
-    font = get_config()["video"]["font"]
-    font_size = float(get_config()["video"]["font_size"])
+    caption_steal = int(get_config()["video"]["caption_steal"])
+    font_name = get_config()["video"]["font_name"]
+    font_size = int(get_config()["video"]["font_size"])
+    font_color = get_config()["video"]["font_color"]
+    outline_ratio = float(get_config()["video"]["outline_ratio"])
+    outline_color = get_config()["video"]["outline_color"]
     music_lead = float(get_config()["video"]["music_lead"])
 
     patched_duration = 0
@@ -43,8 +48,11 @@ def patch_video(outline: VideoOutline) -> VideoFileClip:
         while len(words) > 0:
             curr = []
             if len(words) - twps > 0:
-                curr = words[:twps]
-                words = words[twps:]
+                actual, early = grab_until_ending(words, twps)
+                stolen = (0 if early
+                          else grab_until_ending(words[actual:], caption_steal)[0])
+                curr = words[:actual + stolen]
+                words = words[stolen + actual:]
             else:
                 curr = words
                 words = []
@@ -53,22 +61,15 @@ def patch_video(outline: VideoOutline) -> VideoFileClip:
             caption_text = " ".join(curr)
             zoom_fun = lambda t: 1 / (1.0 + math.e**(-20.0*(t-0.2)))
 
-            caption = TextClip(caption_text, fontsize=font_size,
-                                color="black", font=font, 
-                                stroke_width=30, stroke_color="black")
+            caption = text_to_image(text=caption_text, font_size=font_size, font_name=font_name,
+                                    font_color=font_color, outline_ratio=outline_ratio,
+                                    outline_color=outline_color)
             caption = caption.set_start(patched_duration + patched_caption_duration)
             caption = caption.set_duration(caption_duration)
             caption = resize.resize(caption, zoom_fun)
-            caption = caption.set_position(("center", 1070))
+            caption = caption.set_position(("center", 1040))
             video_clips.append(caption)
-
-            caption = TextClip(caption_text, fontsize=font_size,
-                                color="white", font=font)
-            caption = caption.set_start(patched_duration + patched_caption_duration)
-            caption = caption.set_duration(caption_duration)
-            caption = resize.resize(caption, zoom_fun)
-            caption = caption.set_position(("center", 1080))
-            video_clips.append(caption)
+            
             patched_caption_duration += caption_duration
 
         audio = speech.set_start(patched_duration)
@@ -102,3 +103,21 @@ def patch_video(outline: VideoOutline) -> VideoFileClip:
     patched.audio = CompositeAudioClip(audio_clips)
 
     return patched
+
+def grab_until_ending(next_words: [str], max: int) -> ([str], bool):
+    endings = [".",",","?","!"]
+    grabbed = 0
+    for word in next_words:
+        if grabbed < max:
+            grabbed += 1
+            if ends_with_any(word, endings):
+                return grabbed, True
+        else:
+            break
+    return grabbed, False
+
+def ends_with_any(word: str, endings: [str]):
+    for end in endings:
+        if word.endswith(end):
+            return True
+    return False

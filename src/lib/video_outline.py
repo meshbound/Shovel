@@ -1,6 +1,6 @@
-import asyncio
 import lib.generate_image as generate_image
 import lib.generate_speech as generate_speech
+import asyncio
 
 from moviepy.editor import ImageClip, AudioFileClip
 

@@ -1,5 +1,5 @@
 from lib.config import get_config
-from lib.util import get_subdir_path, get_files_in_dir, get_unix_time_millis
+from lib.util import get_subdir_path, get_files_in_dir, get_unix_time_millis, clean_dir
 from lib.video_outline import VideoOutline
 from moviepy.editor import VideoFileClip
 from simple_youtube_api.Channel import Channel
@@ -24,6 +24,7 @@ class VideoExporter:
 
     def write_and_upload_video(self, video: VideoFileClip, outline: VideoOutline, tags: list[str] = []):
         path = self.write_video(video)
+        self.clean_exports()
         self.upload_video(path, outline, tags)
  
     def upload_video(self, video_path: str, outline: VideoOutline, tags: list[str] = []) -> bool:
@@ -32,7 +33,7 @@ class VideoExporter:
         print("Uploading video...")
         video = LocalVideo(file_path=video_path)
         
-        include_generation_tags = bool(get_config()["upload"]["include_generation_tags"])
+        include_generation_tags = get_config()["upload"]["include_generation_tags"] == "True"
         if not include_generation_tags:
             tags = []
         p_tags = get_config()["upload"]["persistent_tags"]
@@ -43,9 +44,9 @@ class VideoExporter:
                 for tag in tags]
 
         default_language = get_config()["upload"]["default_language"]
-        embeddable = bool(get_config()["upload"]["embeddable"])
+        embeddable = get_config()["upload"]["embeddable"] == "True"
         visibility = get_config()["upload"]["visibility"]
-        public_stats = bool(get_config()["upload"]["public_stats"])
+        public_stats = get_config()["upload"]["public_stats"] == "True"
 
         video.set_title(outline.title)
         video.set_description(outline.description)
@@ -74,3 +75,9 @@ class VideoExporter:
         fps = float(get_config()["video"]["framerate"])
         video.write_videofile(file_path, fps=fps)
         return file_path
+    
+    @staticmethod
+    def clean_exports():
+        dest_path = get_subdir_path(get_config(), "video_out")
+        max_exports = int(get_config()["video"]["max_exports"])
+        clean_dir(dest_path, ".mp4", max_exports)
