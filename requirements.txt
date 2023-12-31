@@ -5,7 +5,6 @@ configobj >= 5.0.8
 openai >= 0.28.1
 google-cloud-texttospeech >= 2.15.0
 pyttsx3 >= 2.90
-http3 >=  0.6.7
 simple-youtube-api >= 0.2.8
 librosa >= 0.10.1
 imgkit >= 1.2.3
