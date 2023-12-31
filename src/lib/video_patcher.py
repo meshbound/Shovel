@@ -76,6 +76,11 @@ def patch_video(outline: VideoOutline) -> VideoFileClip:
         audio_clips.append(audio)
         patched_duration += duration
 
+    overlays_path = get_subdir_path(get_config(), "overlay_assets")
+    overlay_select = random_file_from_dir(overlays_path)
+    overlay = ImageClip(f"{overlays_path}/{overlay_select}")
+    video_clips.append(overlay)
+
     backgrounds_path = get_subdir_path(get_config(), "background_assets")
     background_select = random_file_from_dir(backgrounds_path)
     background = ImageClip(f"{backgrounds_path}/{background_select}")

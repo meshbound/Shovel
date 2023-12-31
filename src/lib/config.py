@@ -36,7 +36,6 @@ def write_default_config():
     stash_dirs["music_assets"] = "assets/music"
     stash_dirs["audio_temp"] = "tmp/audio"
     stash_dirs["image_temp"] = "tmp/image"
-    stash_dirs["text_temp"] = "tmp/text"
     dirs["auth_dirs"] = {}
     auth_dirs = dirs["auth_dirs"]
     auth_dirs["root"] = "./auth/"
@@ -45,19 +44,13 @@ def write_default_config():
 
     config["video"] = {}
     video = config["video"]
-    video["max_exports"] = 10
-    video["last_temp_only"] = True
     video["framerate"] = 24
     video["padding"] = 0.2
     video["caption_chunks"] = 2
     video["caption_speed"] = 1
-    video["caption_steal"] = 2
-    video["font_name"] = "Arial"
+    video["font"] = "Arial-bold"
     video["font_size"] = 50
-    video["font_color"] = "white"
-    video["outline_ratio"] = 0.2
-    video["outline_color"] = "black"
-    video["music_lead"] = 10
+    video["music_lead"] = 10  
 
     config["upload"] = {}
     upload = config["upload"]
@@ -93,7 +86,6 @@ Little did they know what amazing talent he possessed.
     image_gen["api_key"] = ""
 
     config["speech_gen"] = {}
-    speech_gen = config["speech_gen"]
 
     config.write()
 
@@ -109,19 +101,30 @@ def verify_file_structure():
 
 def verify_assets():
     backgrounds_path = get_subdir_path(_config, "background_assets")
-    background_files = get_files_in_dir(backgrounds_path)
-    valid_backgrounds = len(background_files)
-    for f in background_files:
-        file_path = backgrounds_path + "/" + f
-        i = Image.open(file_path)
-        if i.size[0] != 1080 or i.size[1] != 1920:
-            print(f"[WARN]\tBackground {f} has illegal size! Moving...")
-            i.close()
-            if not os.path.exists(backgrounds_path + "/bad/"):
-                os.mkdir(backgrounds_path + "/bad/")
-            os.replace(file_path, backgrounds_path + "/bad/" + f)
-            valid_backgrounds -= 1
+    valid_backgrounds = verify_assets_helper(backgrounds_path)
     if valid_backgrounds == 0:
         print("Generating blank background...")
         image = Image.new('RGB', (1080, 1920), (256,256,256))
         image.save(backgrounds_path + "/blank.png")
+
+    overlays_path = get_subdir_path(_config, "overlay_assets")
+    valid_overlays = verify_assets_helper(overlays_path)
+    if valid_overlays == 0:
+        print("Generating blank overlay...")
+        image = Image.new('RGBA', (1080, 1920), (0,0,0,0))
+        image.save(overlays_path + "/blank.png")
+
+def verify_assets_helper(dir_path: str) -> int:
+    files = get_files_in_dir(dir_path)
+    valid = len(files)
+    for f in files:
+        file_path = dir_path + "/" + f
+        i = Image.open(file_path)
+        if i.size[0] != 1080 or i.size[1] != 1920:
+            print(f"[WARN] {f} has illegal size! Moving...")
+            i.close()
+            if not os.path.exists(dir_path + "/bad/"):
+                os.mkdir(dir_path + "/bad/")
+            os.replace(file_path, dir_path + "/bad/" + f)
+            valid -= 1
+    return valid
