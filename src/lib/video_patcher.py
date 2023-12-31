@@ -45,19 +45,24 @@ def patch_video(outline: VideoOutline) -> VideoFileClip:
         spw = 1.0 / wps
         twps = math.ceil(wps) * caption_chunks
         patched_caption_duration = silence_start
+        last_ended = True
         while len(words) > 0:
             curr = []
+            ended = True
             if len(words) - twps > 0:
-                actual, early = grab_until_ending(words, twps)
-                stolen = (0 if early
-                          else grab_until_ending(words[actual:], caption_steal)[0])
+                actual, ended = grab_until_ending(words, twps)
+                print(f"{words[:actual]}  {ended}")
+                stolen, ended = ((0, True) if ended
+                          else grab_until_ending(words[actual:], caption_steal))
+                if not ended:
+                    stolen = 0
                 curr = words[:actual + stolen]
                 words = words[stolen + actual:]
             else:
                 curr = words
                 words = []
 
-            caption_duration = spw * len(curr) * 1.0 / caption_speed
+            caption_duration = (spw * len(curr) * 1.0 / (caption_speed if not ended else 1.0))
             caption_text = " ".join(curr)
             zoom_fun = lambda t: 1 / (1.0 + math.e**(-20.0*(t-0.2)))
 
@@ -66,11 +71,13 @@ def patch_video(outline: VideoOutline) -> VideoFileClip:
                                     outline_color=outline_color)
             caption = caption.set_start(patched_duration + patched_caption_duration)
             caption = caption.set_duration(caption_duration)
-            caption = resize.resize(caption, zoom_fun)
+            if last_ended:
+                caption = resize.resize(caption, zoom_fun)
             caption = caption.set_position(("center", 1040))
             video_clips.append(caption)
             
             patched_caption_duration += caption_duration
+            last_ended = ended
 
         audio = speech.set_start(patched_duration)
         audio_clips.append(audio)

@@ -50,7 +50,7 @@ def write_default_config():
     video["framerate"] = 24
     video["padding"] = 0.2
     video["caption_chunks"] = 2
-    video["caption_speed"] = 1
+    video["caption_speed"] = 1.1
     video["caption_steal"] = 2
     video["font_name"] = "Arial"
     video["font_size"] = 80
