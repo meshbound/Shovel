@@ -44,9 +44,11 @@ def patch_video(outline: VideoOutline) -> VideoFileClip:
         while len(words) > 0:
             curr = []
             if len(words) - twps > 0:
-                stolen = attempt_steal(words[twps:], caption_steal)
-                curr = words[:twps + stolen]
-                words = words[stolen + twps:]
+                actual, early = grab_until_ending(words, twps)
+                stolen = (0 if early
+                          else grab_until_ending(words[actual:], caption_steal)[0])
+                curr = words[:actual + stolen]
+                words = words[stolen + actual:]
             else:
                 curr = words
                 words = []
@@ -105,17 +107,17 @@ def patch_video(outline: VideoOutline) -> VideoFileClip:
 
     return patched
 
-def attempt_steal(next_words: [str], steal: int) -> [str]:
+def grab_until_ending(next_words: [str], max: int) -> ([str], bool):
     endings = [".",",","?","!"]
-    stolen = 0
+    grabbed = 0
     for word in next_words:
-        if stolen < steal:
-            stolen += 1
+        if grabbed < max:
+            grabbed += 1
             if ends_with_any(word, endings):
-                break
+                return grabbed, True
         else:
-            return 0
-    return stolen
+            break
+    return grabbed, False
 
 def ends_with_any(word: str, endings: [str]):
     for end in endings:
