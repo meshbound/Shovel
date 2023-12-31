@@ -36,6 +36,7 @@ def write_default_config():
     stash_dirs["music_assets"] = "assets/music"
     stash_dirs["audio_temp"] = "tmp/audio"
     stash_dirs["image_temp"] = "tmp/image"
+    stash_dirs["text_temp"] = "tmp/text"
     dirs["auth_dirs"] = {}
     auth_dirs = dirs["auth_dirs"]
     auth_dirs["root"] = "./auth/"
@@ -44,13 +45,19 @@ def write_default_config():
 
     config["video"] = {}
     video = config["video"]
+    video["max_exports"] = 10
+    video["last_temp_only"] = True
     video["framerate"] = 24
     video["padding"] = 0.2
     video["caption_chunks"] = 2
     video["caption_speed"] = 1
-    video["font"] = "Arial-bold"
-    video["font_size"] = 50
-    video["music_lead"] = 10  
+    video["caption_steal"] = 2
+    video["font_name"] = "Arial"
+    video["font_size"] = 80
+    video["font_color"] = "white"
+    video["outline_ratio"] = 0.2
+    video["outline_color"] = "black"
+    video["music_lead"] = 10
 
     config["upload"] = {}
     upload = config["upload"]
