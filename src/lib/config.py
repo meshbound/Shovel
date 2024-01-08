@@ -36,7 +36,8 @@ def write_default_config():
     stash_dirs["music_assets"] = "assets/music"
     stash_dirs["audio_temp"] = "tmp/audio"
     stash_dirs["image_temp"] = "tmp/image"
-    stash_dirs["text_temp"] = "tmp/text"
+    stash_dirs["caption_temp"] = "tmp/caption"
+    stash_dirs["script_temp"] = "tmp/script"
     dirs["auth_dirs"] = {}
     auth_dirs = dirs["auth_dirs"]
     auth_dirs["root"] = "./auth/"
@@ -61,6 +62,7 @@ def write_default_config():
 
     config["upload"] = {}
     upload = config["upload"]
+    upload["do_not_upload"] = True
     upload["visibility"] = "private"
     upload["persistent_tags"] = "shorts,fyp"
     upload["include_generation_tags"] = True
@@ -70,6 +72,7 @@ def write_default_config():
 
     config["text_gen"] = {}
     text_gen = config["text_gen"]
+    text_gen["use_placeholder"] = True
     text_gen["prompt"] = """Generate TikTok video scripts using the given prompt.
 Example:
 
@@ -88,11 +91,14 @@ Little did they know what amazing talent he possessed.
 
     config["image_gen"] = {}
     image_gen = config["image_gen"]
+    image_gen["use_placeholder"] = True
     image_gen["width"] = 512
     image_gen["height"] = 512
     image_gen["api_key"] = ""
 
     config["speech_gen"] = {}
+    speech_gen = config["speech_gen"]
+    speech_gen["use_placeholder"] = True
 
     config.write()
 

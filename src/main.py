@@ -7,13 +7,15 @@ from lib.video_export import VideoExporter
 
 load_config()
 if get_config()["video"]["last_temp_only"] == "True":
-    clean_dirs(get_config(), [("audio_temp",".wav"),("image_temp",".png"),("text_temp",".png")])
+    clean_dirs(get_config(), [("audio_temp",".wav"),("image_temp",".png"),
+                              ("script_temp",".txt"),("caption_temp",".png")])
 
 async def create_video(tags):
     outline = await generate_video(tags)
     video = patch_video(outline)
 
-    video_exporter = VideoExporter(do_not_upload=True)
+    do_not_upload = (get_config()["upload"]["do_not_upload"] == "True")
+    video_exporter = VideoExporter(do_not_upload)
     video_exporter.write_and_upload_video(video, outline, tags)
 
 if __name__ == "__main__":

@@ -51,7 +51,6 @@ def patch_video(outline: VideoOutline) -> VideoFileClip:
             ended = True
             if len(words) - twps > 0:
                 actual, ended = grab_until_ending(words, twps)
-                print(f"{words[:actual]}  {ended}")
                 stolen, ended = ((0, True) if ended
                           else grab_until_ending(words[actual:], caption_steal))
                 if not ended:
@@ -72,6 +71,7 @@ def patch_video(outline: VideoOutline) -> VideoFileClip:
             caption = caption.set_start(patched_duration + patched_caption_duration)
             caption = caption.set_duration(caption_duration)
             if last_ended:
+                
                 caption = resize.resize(caption, zoom_fun)
             caption = caption.set_position(("center", 1040))
             video_clips.append(caption)

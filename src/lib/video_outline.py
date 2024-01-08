@@ -1,5 +1,6 @@
 import lib.generate_image as generate_image
 import lib.generate_speech as generate_speech
+from lib.config import get_config
 import asyncio
 
 from moviepy.editor import ImageClip, AudioFileClip
@@ -37,8 +38,10 @@ class VideoOutline:
     @staticmethod
     async def generate(shot_outline_meta: ShotOutlineMeta):
         shots = []
-        image_generator = generate_image.ImageGenerator(use_placeholder=True)
-        speech_generator = generate_speech.SpeechGenerator(use_placeholder=True)
+        image_gen_use_placeholder = (get_config()["image_gen"]["use_placeholder"] == "True")
+        speech_gen_use_placeholder = (get_config()["speech_gen"]["use_placeholder"] == "True")
+        image_generator = generate_image.ImageGenerator(image_gen_use_placeholder)
+        speech_generator = generate_speech.SpeechGenerator(speech_gen_use_placeholder)
 
         print("Generating video outline...")
 

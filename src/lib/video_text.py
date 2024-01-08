@@ -39,7 +39,7 @@ def text_to_image(
     }
 
     filename = get_unix_time_millis()
-    base_path = get_subdir_path(get_config(), "text_temp")
+    base_path = get_subdir_path(get_config(), "caption_temp")
     file_path = f"{base_path}/{filename}.png"
     imgkit.from_string(string=body, output_path=file_path, options=options)
     return ImageClip(file_path)

@@ -44,7 +44,7 @@ class ScriptGenerator:
         )
         script = response.choices[0].message.content
         filename = get_unix_time_millis()
-        base_dir = get_subdir_path(get_config(), "text_temp")
+        base_dir = get_subdir_path(get_config(), "script_temp")
         path = f"{base_dir}/{filename}.txt"
         with open(path, "w", encoding="utf-8") as f:
             f.write(script)
