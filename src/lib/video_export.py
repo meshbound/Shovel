@@ -2,8 +2,6 @@ from lib.config import get_config
 from lib.util import get_subdir_path, get_files_in_dir, get_unix_time_millis, clean_dir
 from lib.video_outline import VideoOutline
 from moviepy.editor import VideoFileClip
-from simple_youtube_api.Channel import Channel
-from simple_youtube_api.LocalVideo import LocalVideo
 
 class VideoExporter:
     def __init__(self, do_not_upload: bool = False):
