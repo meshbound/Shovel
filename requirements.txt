@@ -1,5 +1,5 @@
 moviepy >= 1.0.3
-Pillow >= 9.5.0
+Pillow == 9.5.0
 numpy >= 1.26.2
 configobj >= 5.0.8
 openai >= 0.28.1

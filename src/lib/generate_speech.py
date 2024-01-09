@@ -41,7 +41,6 @@ class SpeechGenerator:
             voice=voice,
             audio_config=audio_config
         )
-
         audio = self.write_to_timestamped_file(response.audio_content)
         return audio
     
@@ -55,11 +54,10 @@ class SpeechGenerator:
         base_path = get_subdir_path(get_config(), "audio_temp")
         file_path = f"{base_path}/{filename}.wav"
         engine.save_to_file(text, file_path)
-
-        while not engine.isBusy():
-            time.sleep(0.1)
-
         engine.runAndWait()
+        
+        while engine.isBusy():
+            time.sleep(0.1)
 
         return file_path
 
@@ -70,5 +68,4 @@ class SpeechGenerator:
         file_path = f"{base_path}/{filename}.mp3"
         with open(file_path, "wb") as out:
             out.write(data)
-
         return AudioFileClip(file_path)
