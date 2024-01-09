@@ -1,6 +1,8 @@
 from lib.config import get_config
 from lib.util import get_subdir_path, get_files_in_dir, get_unix_time_millis, clean_dir
 from lib.video_outline import VideoOutline
+from lib.youtube.api_types.video_meta import VideoMeta
+from lib.youtube.api import YoutubeAPI
 from moviepy.editor import VideoFileClip
 
 class VideoExporter:
@@ -17,8 +19,7 @@ class VideoExporter:
         credential_path = (f"{auth_path}/{'credential.storage'}"
                            if len(credential_files) == 0 
                            else f"{auth_path}/{credential_files[0]}")
-        self.client = Channel()
-        self.client.login(secret_path, credential_path)
+        self.client = YoutubeAPI(secret_path, credential_path)
 
     def write_and_upload_video(self, video: VideoFileClip, outline: VideoOutline, tags: list[str] = []):
         path = self.write_video(video)
@@ -29,7 +30,6 @@ class VideoExporter:
         if self.do_not_upload:
             return
         print("Uploading video...")
-        video = LocalVideo(file_path=video_path)
         
         include_generation_tags = get_config()["upload"]["include_generation_tags"] == "True"
         if not include_generation_tags:
@@ -46,16 +46,21 @@ class VideoExporter:
         visibility = get_config()["upload"]["visibility"]
         public_stats = get_config()["upload"]["public_stats"] == "True"
 
-        video.set_title(outline.title)
-        video.set_description(outline.description)
-        video.set_tags(tags)
-        video.set_default_language(default_language)
-        video.set_embeddable(embeddable)
-        video.set_privacy_status(visibility)
-        video.set_public_stats_viewable(public_stats)
+        video_meta = VideoMeta(
+            video_path=video_path,
+            title=outline.title,
+            description=outline.description,
+            visibility=visibility,
+            tags=tags,
+            default_language=default_language,
+            embeddable=embeddable,
+            public_stats=public_stats
 
+        )
+
+        video = None
         try:
-            video = self.client.upload_video(video)
+            video = self.client.upload_video(video_meta)
         except:
             print("[Video export] Youtube API quota exceeded!")
             return False

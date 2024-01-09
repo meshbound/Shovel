@@ -3,9 +3,18 @@
 <p>
 Execute src/main.py
 
-first run generates **shovel.ini**
+First run generates **shovel.ini**
 
 Get help with **--help** flag
+</p>
+
+<h2>Extras</h2>
+<p>
+Place videos you desire to be on the bottom in stash/assets/bottoms
+
+Place background music in stash/assets/music
+
+Place overlays in stash/assets/overlays, feel free to edit with software of your choice
 </p>
 
 <h2>Requirements</h2>
@@ -21,7 +30,7 @@ Get help with **--help** flag
     <li>Set instances of use_placeholder in shovel.ini to False as desired</li>
     <li>Supply google client secrets for tts in auth/google</li>
     <li>Supply OpenAI api key and model for script generation in shovel.ini</li>
-    <li>Supply stability api key for image generation in shovel.ini</li>
+    <li>Supply Stability api key for image generation in shovel.ini</li>
 </ul>
 <p>
 It is recommended while configuring that you set use_placeholder to False one at a time

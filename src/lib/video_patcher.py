@@ -3,7 +3,7 @@ from lib.config import get_config
 from lib.audio_silence import get_silence
 from lib.video_text import text_to_image
 from lib.video_outline import VideoOutline
-from moviepy.video.fx import resize
+from moviepy.video.fx import resize, loop
 from moviepy.editor import *
 import random
 import math
@@ -97,8 +97,9 @@ def patch_video(outline: VideoOutline) -> VideoFileClip:
     bottom_select = random_file_from_dir(bottoms_path)
     if bottom_select != None:
         bottom = VideoFileClip(f"{bottoms_path}/{bottom_select}")
-        bottom = bottom.subclip(random.randint(0, math.floor(bottom.duration) 
-                                            - math.ceil(patched_duration)))
+        bottom = bottom.subclip(random.randint(0, max(0, math.floor(bottom.duration) 
+                                                      - math.ceil(patched_duration))))
+        bottom = loop.loop(bottom, duration=patched_duration)
         bottom = bottom.set_position(("center",1080))
         bottom = resize.resize(bottom, width=1080, height=840)
         video_clips.insert(1, bottom)
