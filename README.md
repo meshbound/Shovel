@@ -1,13 +1,6 @@
-<head>
-<style>
-    h1 {
-        text-align: center;
-    }
-</style>
-</head>
-
-<body>
+<center>
 <h1>Shovel</h1>
+</center>
 
 <h2>Usage</h2>
 <p>
@@ -57,4 +50,3 @@
 <p>
     Upload videos at your discretion; we do not condone abuse.
 </p>
-</body>
