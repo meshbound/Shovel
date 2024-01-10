@@ -1,7 +1,3 @@
-<center>
-<h1>Shovel</h1>
-</center>
-
 <h2>Usage</h2>
 <p>
     Execute <code>src/main.py</code>.
