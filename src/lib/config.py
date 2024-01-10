@@ -63,7 +63,7 @@ def write_default_config():
     config["upload"] = {}
     upload = config["upload"]
     upload["do_not_upload"] = True
-    upload["visibility"] = "private"
+    upload["privacy_status"] = "private"
     upload["persistent_tags"] = "shorts,fyp"
     upload["include_generation_tags"] = True
     upload["default_language"] = "en-US"
@@ -84,6 +84,7 @@ They all laughed at him for eating powdered sugar because he could not afford gr
 
 Little did they know what amazing talent he possessed.
 [img:boy doing flossing dance]"""
+    text_gen["default_tags"] = "minecraft,building,zombies"
     text_gen["api_key"] = ""
     text_gen["model"] = ""
     text_gen["temperature"] = 0.25

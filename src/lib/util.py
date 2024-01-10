@@ -42,3 +42,9 @@ def clean_dirs(config: ConfigObj, targets: [(str, str)]):
     for dir, extension in targets:
         dir_path = get_subdir_path(config, dir)
         clean_dir(dir_path, extension, 0)
+
+def parse_tags(p_tags: str, include_hashtag: bool = False):
+    tags = [tag for tag in p_tags.strip().split(",")]
+    tags = [f"{'#' if include_hashtag else ''}{tag.strip().replace('#','')}"
+            for tag in tags]
+    return tags

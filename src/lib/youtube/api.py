@@ -16,7 +16,7 @@ class YoutubeAPI:
     def __init__(self, secrets_path: str, credential_path: str):
         self.secrets_path = secrets_path
         self.credential_path = credential_path
-        args = argparser.parse_args()
+        args, unknown = argparser.parse_known_args()
         self.youtube = self.__get_authenticated_service(args)
 
     def __get_authenticated_service(self, args):
@@ -47,9 +47,10 @@ class YoutubeAPI:
             defaultLanguage=video_meta.default_language
             ),
             status=dict(
-            privacyStatus=video_meta.visibility,
-            embeddable=video_meta.embeddable,
-            publicStatsViewable=video_meta.public_stats
+            privacyStatus=video_meta.privacy_status,
+            embeddable=str(video_meta.embeddable).lower,
+            publicStatsViewable=str(video_meta.public_stats).lower,
+            selfDeclaredMadeForKids=str(video_meta.for_kids).lower
             )
         )
 

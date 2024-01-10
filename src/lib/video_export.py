@@ -1,5 +1,5 @@
 from lib.config import get_config
-from lib.util import get_subdir_path, get_files_in_dir, get_unix_time_millis, clean_dir
+from lib.util import get_subdir_path, get_files_in_dir, get_unix_time_millis, clean_dir, parse_tags
 from lib.video_outline import VideoOutline
 from lib.youtube.api_types.video_meta import VideoMeta
 from lib.youtube.api import YoutubeAPI
@@ -28,6 +28,7 @@ class VideoExporter:
  
     def upload_video(self, video_path: str, outline: VideoOutline, tags: list[str] = []) -> bool:
         if self.do_not_upload:
+            print("Cannot upload video due to config safegaurd!")
             return
         print("Uploading video...")
         
@@ -35,27 +36,27 @@ class VideoExporter:
         if not include_generation_tags:
             tags = []
         p_tags = get_config()["upload"]["persistent_tags"]
-        tags.extend([
-            tag for tag in p_tags.strip().split(",")
-        ])
-        tags = [f"#{tag.strip().replace('#','')}"
-                for tag in tags]
-
+        tags.extend(parse_tags(p_tags, include_hashtag=True))
+        tags = list(set(tags))
+        char_count = sum(len(tag) for tag in tags)
+        while char_count > 400:
+            char_count -= len(tags[len(tags)-1])
+            tags = tags[:-1]
+            
         default_language = get_config()["upload"]["default_language"]
         embeddable = get_config()["upload"]["embeddable"] == "True"
-        visibility = get_config()["upload"]["visibility"]
+        privacy_status = get_config()["upload"]["privacy_status"]
         public_stats = get_config()["upload"]["public_stats"] == "True"
 
         video_meta = VideoMeta(
             video_path=video_path,
             title=outline.title,
             description=outline.description,
-            visibility=visibility,
+            privacy_status=privacy_status,
             tags=tags,
             default_language=default_language,
             embeddable=embeddable,
             public_stats=public_stats
-
         )
 
         video = None
