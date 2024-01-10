@@ -2,6 +2,7 @@ import os
 import time
 import math
 import pyttsx3
+import platform
 from lib.config import get_config
 from lib.util import get_subdir_path, get_files_in_dir, get_unix_time_millis
 from google.cloud import texttospeech
@@ -54,10 +55,15 @@ class SpeechGenerator:
         base_path = get_subdir_path(get_config(), "audio_temp")
         file_path = f"{base_path}/{filename}.wav"
         engine.save_to_file(text, file_path)
-        engine.runAndWait()
-        
-        while engine.isBusy():
-            time.sleep(0.1)
+
+        if platform.system() == "Linux":
+            engine.runAndWait()
+            while engine.isBusy():
+                time.sleep(0.1)
+        else:
+            while not engine.isBusy():
+                time.sleep(0.1)
+            engine.runAndWait()
 
         return file_path
 
