@@ -7,7 +7,7 @@
     For help, use the <strong>--help</strong> flag.
 </p>
 
-https://github.com/meshbound/Shovel/assets/60497577/306a3117-8ce5-4a92-9eec-22495f650fd0
+https://github.com/meshbound/Shovel/assets/60497577/2bb3ae3d-49b9-45d5-8a1d-27f0d1547051
 
 <h2>Extras</h2>
 <p>
