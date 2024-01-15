@@ -29,17 +29,27 @@ https://github.com/meshbound/Shovel/assets/60497577/2bb3ae3d-49b9-45d5-8a1d-27f0
 <h2>Generating Content</h2>
 <ul>
     <li>Set instances of <code>use_placeholder</code> in <strong>shovel.ini</strong> to <code>False</code> as needed.</li>
-    <li>Supply Google service account secrets for TTS in <code>auth/google</code>.</li>
     <li>Provide OpenAI API key and model for script generation in <strong>shovel.ini</strong>.</li>
     <li>Supply Stability API key for image generation in <strong>shovel.ini</strong>.</li>
+    <li>System TTS engine is used by default.</li>
 </ul>
 <p>
     While configuring, it's recommended to set <code>use_placeholder</code> to <code>False</code> one at a time.
 </p>
 
-<h2>Uploading Content to YouTube</h2>
+<h2>Leveraging Google TTS</h2>
 <ol>
     <li>Create a project on Google Cloud Platform.</li>
+    <li>Enable Cloud Text-to-Speech API.</li>
+    <li>Create a serivce account.</li>
+    <li>Download service account keys.</li>
+    <li>Place keys in <code>auth/google</code>.</li>
+    <li>Set <code>use_placeholder</code> to <code>False</code> in <strong>shovel.ini</strong>.</li>
+</ol>
+
+<h2>Uploading Content to YouTube</h2>
+<ol>
+    <li>Create or reuse a project on Google Cloud Platform.</li>
     <li>Enable YouTube Data API v3.</li>
     <li>Download OAuth 2.0 client secrets.</li>
     <li>Place client secrets in <code>auth/youtube</code>.</li>
