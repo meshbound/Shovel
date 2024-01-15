@@ -7,6 +7,8 @@
     For help, use the <strong>--help</strong> flag.
 </p>
 
+https://github.com/meshbound/Shovel/assets/60497577/306a3117-8ce5-4a92-9eec-22495f650fd0
+
 <h2>Extras</h2>
 <p>
     Place videos you want at the bottom in <code>stash/assets/bottoms</code>.
