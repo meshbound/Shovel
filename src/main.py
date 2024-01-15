@@ -8,7 +8,7 @@ from lib.video_export import VideoExporter
 
 load_config()
 if get_config()["video"]["last_temp_only"] == "True":
-    clean_dirs(get_config(), [("audio_temp",".wav"),("image_temp",".png"),
+    clean_dirs(get_config(), [("audio_temp",".wav"),("audio_temp",".mp3"),("image_temp",".png"),
                               ("script_temp",".txt"),("caption_temp",".png")])
 
 async def create_video(tags, mode):
