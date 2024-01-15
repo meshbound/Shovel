@@ -29,7 +29,7 @@ https://github.com/meshbound/Shovel/assets/60497577/2bb3ae3d-49b9-45d5-8a1d-27f0
 <h2>Generating Content</h2>
 <ul>
     <li>Set instances of <code>use_placeholder</code> in <strong>shovel.ini</strong> to <code>False</code> as needed.</li>
-    <li>Supply Google client secrets for TTS in <code>auth/google</code>.</li>
+    <li>Supply Google service account secrets for TTS in <code>auth/google</code>.</li>
     <li>Provide OpenAI API key and model for script generation in <strong>shovel.ini</strong>.</li>
     <li>Supply Stability API key for image generation in <strong>shovel.ini</strong>.</li>
 </ul>
