@@ -80,6 +80,7 @@ def patch_video(outline: VideoOutline) -> VideoFileClip:
             last_ended = ended
 
         audio = speech.set_start(patched_duration)
+        audio = audio.set_duration(audio.duration - 0.1)
         audio_clips.append(audio)
         patched_duration += duration
 

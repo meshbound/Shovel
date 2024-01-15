@@ -23,7 +23,6 @@ class VideoExporter:
 
     def write_and_upload_video(self, video: VideoFileClip, outline: VideoOutline, tags: list[str] = []):
         path = self.write_video(video)
-        self.clean_exports()
         self.upload_video(path, outline, tags)
  
     def upload_video(self, video_path: str, outline: VideoOutline, tags: list[str] = []) -> bool:
@@ -73,6 +72,7 @@ class VideoExporter:
 
     @staticmethod
     def write_video(video: VideoFileClip) -> str:
+        VideoExporter.clean_exports()
         filename = get_unix_time_millis()
         dest_path = get_subdir_path(get_config(), "video_out")
         file_path = f"{dest_path}/{filename}.mp4"
