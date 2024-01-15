@@ -76,14 +76,20 @@ def write_default_config():
     text_gen["prompt"] = """Generate TikTok video scripts using the given prompt.
 Example:
 
-This boy has an incredible talent. His name is Jacob Mello.
-[img:smiling boy giving a thumbs up]
+[title:My Minecraft Trolling Adventure]
+[description:I was playing Minecraft and decided to troll some people. Here\'s what happened.]
 
-They all laughed at him for eating powdered sugar because he could not afford granulated sugar for lunch.
-[img:boy eating granulated sugar]
+Introducing the ultimate Minecraft builder, Alex!
+[img:Alex holding a diamond pickaxe]
 
-Little did they know what amazing talent he possessed.
-[img:boy doing flossing dance]"""
+Everyone thought Alex was just another player in the game, until they saw his incredible building skills.
+[img:Alex constructing a massive castle]
+
+But little did they know, Alex\'s building talents were about to be put to the ultimate test.
+[img:Alex surrounded by a horde of zombies]
+
+Watch as Alex uses his creativity and quick thinking to fend off the zombie invasion and protect his masterpiece!
+[img:Alex building a fortress to keep the zombies out]"""
     text_gen["default_tags"] = "minecraft,building,zombies"
     text_gen["api_key"] = ""
     text_gen["model"] = ""
